@@ -81,7 +81,7 @@ var PHOTOS_LIST = [
 var PIN = {
   width: 50,
   height: 40,
-  xMax: 1200,
+  xMax: 980,
   yMin: 130,
   yMax: 630
 };
