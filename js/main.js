@@ -85,25 +85,39 @@ var PHOTOS_LIST = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var PIN = {
-  width: 50,
-  height: 40,
-  xMax: 980,
-  yMin: 130,
-  yMax: 630
-};
-var pinPointer = PIN.width / 2;
-
 var TOTAL_ADS = 8;
 var ads = [];
 
 var EXCLUDING_NUMBER = 1;
 
 var map = document.querySelector('.map');
-var mapPins = map.querySelector('.map__pins');
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var mapWidth = map.offsetWidth;
+var mapHeight = map.offsetHeight;
 
-var cardTemplate = document.querySelector('#card').content;
+var PIX_Y_MIN = 130;
+var PIX_Y_MAX = 630;
+
+var pin = document.querySelector('.map__pin');
+var pinMain = document.querySelector('.map__pin--main');
+var PIN_MAIN_HEIGHT = pinMain.offsetHeight;
+var PIN_MAIN_WIDTH = pinMain.offsetWidth;
+
+var PIN = {
+  width: pin.offsetWidth,
+  height: pin.offsetHeight,
+  xMax: mapWidth,
+  yMin: PIX_Y_MIN,
+  yMax: PIX_Y_MAX
+};
+
+var pinPointer = PIN.width / 2;
+var pinMainPointer = PIN_MAIN_WIDTH / 2;
+
+var template = document.querySelector('#pin').content.querySelector('.map__pin');
+
+var form = document.querySelector('.ad-form');
+var address = form.querySelector('#address');
+var fieldsets = document.querySelectorAll('.ad-form fieldset');
 
 // возвращает случайное число
 var getRandomNumber = function (min, max) {
@@ -163,13 +177,13 @@ var getAds = function (array, quantity) {
 };
 
 // возвращает отрисованную метку
-var renderPin = function (pin) {
-  var pinElement = pinTemplate.cloneNode(true);
+var renderPin = function (pinItem) {
+  var pinElement = template.cloneNode(true);
 
-  pinElement.style.left = pin.location.x + 'px';
-  pinElement.style.top = pin.location.y + 'px';
-  pinElement.querySelector('img').src = pin.author.avatar;
-  pinElement.querySelector('img').alt = pin.offer.title;
+  pinElement.style.left = pinItem.location.x + 'px';
+  pinElement.style.top = pinItem.location.y + 'px';
+  pinElement.querySelector('img').src = pinItem.author.avatar;
+  pinElement.querySelector('img').alt = pinItem.offer.title;
 
   return pinElement;
 };
@@ -256,8 +270,54 @@ var generateThings = function (array, area, render) {
   area.appendChild(fragment);
 };
 
-getAds(ads, TOTAL_ADS);
-generateThings(ads, mapPins, renderPin);
-generateThings(ads[0], map, renderCard);
+// добавляет или удаляет атрибуты disabled, в зависимости от флага isActive
+var changeFieldsetsState = function (array, isActive) {
+  if (isActive) {
+    for (var i = 0; i < array.length; i++) {
+      array[i].removeAttribute('disabled', 'disabled');
+    }
+  } else {
+    for (var j = 0; j < array.length; j++) {
+      array[j].setAttribute('disabled', 'disabled');
+    }
+  }
+};
 
-map.classList.remove('map--faded');
+// заполняет поле с адресом
+var addAddress = function (isActive) {
+  if (isActive) {
+    address.value = (Math.round(pinMain.offsetLeft + pinMainPointer)) + ', ' + (Math.round(pinMain.offsetTop + PIN_MAIN_HEIGHT));
+  }
+  else {
+    address.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2));
+  }
+};
+
+// переключает страницу в активное состояние
+var activePage = function () {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  changeFieldsetsState(fieldsets, true);
+  addAddress(true);
+  getAds(ads, TOTAL_ADS);
+  generatePins(ads);
+};
+
+pinMain.addEventListener('mousedown', function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.button === 0) {
+      activePage();
+    }
+  }
+});
+
+pinMain.addEventListener('keydown', function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.key === 'Enter') {
+      activePage();
+    }
+  }
+});
+
+changeFieldsetsState(fieldsets, false);
+addAddress(false);
