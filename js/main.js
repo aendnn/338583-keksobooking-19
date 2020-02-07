@@ -102,6 +102,7 @@ var LEFT_MOUSE_KEYCODE = 0;
 
 var pin = document.querySelector('.map__pin');
 var pinMain = document.querySelector('.map__pin--main');
+
 var PIN_MAIN_HEIGHT = pinMain.offsetHeight;
 var PIN_MAIN_WIDTH = pinMain.offsetWidth;
 
