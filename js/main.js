@@ -97,6 +97,9 @@ var mapHeight = map.offsetHeight;
 var PIX_Y_MIN = 130;
 var PIX_Y_MAX = 630;
 
+var ENTER_KEY = 'Enter';
+var LEFT_MOUSE_KEYCODE = 0;
+
 var pin = document.querySelector('.map__pin');
 var pinMain = document.querySelector('.map__pin--main');
 var PIN_MAIN_HEIGHT = pinMain.offsetHeight;
@@ -116,8 +119,10 @@ var pinMainPointer = PIN_MAIN_WIDTH / 2;
 var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var form = document.querySelector('.ad-form');
-var address = form.querySelector('#address');
-var fieldsets = document.querySelectorAll('.ad-form fieldset');
+var fieldsets = form.querySelectorAll('fieldset');
+var addressField = form.querySelector('#address');
+var roomsCountField = form.querySelector('#room_number');
+var guestsCountField = form.querySelector('#capacity');
 
 // возвращает случайное число
 var getRandomNumber = function (min, max) {
@@ -286,10 +291,29 @@ var changeFieldsetsState = function (array, isActive) {
 // заполняет поле с адресом
 var addAddress = function (isActive) {
   if (isActive) {
-    address.value = (Math.round(pinMain.offsetLeft + pinMainPointer)) + ', ' + (Math.round(pinMain.offsetTop + PIN_MAIN_HEIGHT));
+    addressField.value = (Math.round(pinMain.offsetLeft + pinMainPointer)) + ', ' + (Math.round(pinMain.offsetTop + PIN_MAIN_HEIGHT)); // координаты острого конца метки
+  } else {
+    addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2)); // если страница не активна, координаты метки - центр карты
   }
-  else {
-    address.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2));
+};
+
+// валидация поля гостей
+var checkGuestsValidity = function () {
+  if (guestsCountField.value === '0') {
+    guestsCountField.setCustomValidity('Минимальное количество гостей: 1');
+  } else {
+    guestsCountField.setCustomValidity('');
+  }
+};
+
+// валидация поля комнат
+var checkRoomsValidity = function () {
+  if (roomsCountField.value === '100') {
+    roomsCountField.setCustomValidity('Недопустимое значение');
+  } else if (guestsCountField.value > roomsCountField.value) {
+    roomsCountField.setCustomValidity('Недостаточно комнат');
+  } else {
+    roomsCountField.setCustomValidity('');
   }
 };
 
@@ -303,9 +327,17 @@ var activePage = function () {
   generatePins(ads);
 };
 
+guestsCountField.addEventListener('change', function () {
+  checkGuestsValidity();
+});
+
+roomsCountField.addEventListener('change', function () {
+  checkRoomsValidity();
+});
+
 pinMain.addEventListener('mousedown', function (evt) {
   if (map.classList.contains('map--faded')) {
-    if (evt.button === 0) {
+    if (evt.button === LEFT_MOUSE_KEYCODE) {
       activePage();
     }
   }
@@ -313,7 +345,7 @@ pinMain.addEventListener('mousedown', function (evt) {
 
 pinMain.addEventListener('keydown', function (evt) {
   if (map.classList.contains('map--faded')) {
-    if (evt.key === 'Enter') {
+    if (evt.key === ENTER_KEY) {
       activePage();
     }
   }
