@@ -85,6 +85,7 @@ var PIN = {
   yMin: 130,
   yMax: 630
 };
+
 var pinPointer = PIN.width / 2;
 
 var TOTAL_ADS = 8;
@@ -151,7 +152,6 @@ var getAds = function (array, quantity) {
   }
   return array;
 };
-
 
 // возвращает отрисованную метку
 var renderPin = function (pin) {
