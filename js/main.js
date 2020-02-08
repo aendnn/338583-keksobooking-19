@@ -94,28 +94,29 @@ var map = document.querySelector('.map');
 var mapWidth = map.offsetWidth;
 var mapHeight = map.offsetHeight;
 
-var PIX_Y_MIN = 130;
-var PIX_Y_MAX = 630;
+var PIN_Y_MIN = 130;
+var PIN_Y_MAX = 630;
 
 var ENTER_KEY = 'Enter';
 var LEFT_MOUSE_KEYCODE = 0;
 
-var pin = document.querySelector('.map__pin');
-var pinMain = document.querySelector('.map__pin--main');
+var pinSelector = document.querySelector('.map__pin');
+var pinMainSelector = document.querySelector('.map__pin--main');
 
-var PIN_MAIN_HEIGHT = pinMain.offsetHeight;
-var PIN_MAIN_WIDTH = pinMain.offsetWidth;
+var PIN_MAIN_HEIGHT = pinMainSelector.offsetHeight;
+var PIN_MAIN_WIDTH = pinMainSelector.offsetWidth;
 
-var PIN = {
-  width: pin.offsetWidth,
-  height: pin.offsetHeight,
+var pin = {
+  width: pinSelector.offsetWidth,
+  height: pinSelector.offsetHeight,
   xMax: mapWidth,
-  yMin: PIX_Y_MIN,
-  yMax: PIX_Y_MAX
+  yMin: PIN_Y_MIN,
+  yMax: PIN_Y_MAX,
+  getPointer: function (width) {
+    var center = width / 2;
+    return center;
+  }
 };
-
-var pinPointer = PIN.width / 2;
-var pinMainPointer = PIN_MAIN_WIDTH / 2;
 
 var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
@@ -152,8 +153,8 @@ var getElements = function (array) {
 // возвращает массив с объявлениями
 var getAds = function (array, quantity) {
   for (var i = 0; i < quantity; i++) {
-    var locationX = getRandomNumber(0, (PIN.xMax - PIN.width - pinPointer + EXCLUDING_NUMBER));
-    var locationY = getRandomNumber(PIN.yMin, PIN.yMax + EXCLUDING_NUMBER - PIN.height);
+    var locationX = getRandomNumber(0, (pin.xMax - pin.width - pin.getPointer(pin.width) + EXCLUDING_NUMBER));
+    var locationY = getRandomNumber(pin.yMin, pin.yMax + EXCLUDING_NUMBER - pin.height);
 
     var ad = {
       author: {
@@ -292,7 +293,7 @@ var changeFieldsetsState = function (array, isActive) {
 // заполняет поле с адресом
 var addAddress = function (isActive) {
   if (isActive) {
-    addressField.value = (Math.round(pinMain.offsetLeft + pinMainPointer)) + ', ' + (Math.round(pinMain.offsetTop + PIN_MAIN_HEIGHT)); // координаты острого конца метки
+    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(PIN_MAIN_WIDTH))) + ', ' + (Math.round(pinMainSelector.offsetTop + PIN_MAIN_HEIGHT)); // координаты острого конца метки
   } else {
     addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2)); // если страница не активна, координаты метки - центр карты
   }
@@ -336,7 +337,7 @@ roomsCountField.addEventListener('change', function () {
   checkRoomsValidity();
 });
 
-pinMain.addEventListener('mousedown', function (evt) {
+pinMainSelector.addEventListener('mousedown', function (evt) {
   if (map.classList.contains('map--faded')) {
     if (evt.button === LEFT_MOUSE_KEYCODE) {
       activePage();
@@ -344,7 +345,7 @@ pinMain.addEventListener('mousedown', function (evt) {
   }
 });
 
-pinMain.addEventListener('keydown', function (evt) {
+pinMainSelector.addEventListener('keydown', function (evt) {
   if (map.classList.contains('map--faded')) {
     if (evt.key === ENTER_KEY) {
       activePage();
