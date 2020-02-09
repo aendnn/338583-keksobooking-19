@@ -86,13 +86,7 @@ var PHOTOS_LIST = [
 ];
 
 var TOTAL_ADS = 8;
-var ads = [];
-
 var EXCLUDING_NUMBER = 1;
-
-var map = document.querySelector('.map');
-var mapWidth = map.offsetWidth;
-var mapHeight = map.offsetHeight;
 
 var PIN_Y_MIN = 130;
 var PIN_Y_MAX = 630;
@@ -100,18 +94,22 @@ var PIN_Y_MAX = 630;
 var ENTER_KEY = 'Enter';
 var LEFT_MOUSE_KEYCODE = 0;
 
+var ads = [];
+
+var map = document.querySelector('.map');
+var mapWidth = map.offsetWidth;
+var mapHeight = map.offsetHeight;
+
 var pinSelector = document.querySelector('.map__pin');
 var pinMainSelector = document.querySelector('.map__pin--main');
-
-var PIN_MAIN_HEIGHT = pinMainSelector.offsetHeight;
-var PIN_MAIN_WIDTH = pinMainSelector.offsetWidth;
-
 var pin = {
   width: pinSelector.offsetWidth,
   height: pinSelector.offsetHeight,
   xMax: mapWidth,
   yMin: PIN_Y_MIN,
   yMax: PIN_Y_MAX,
+  mainHeight: pinMainSelector.offsetHeight,
+  mainWidth: pinMainSelector.offsetWidth,
   getPointer: function (width) {
     var center = width / 2;
     return center;
@@ -293,7 +291,7 @@ var changeFieldsetsState = function (array, isActive) {
 // заполняет поле с адресом
 var addAddress = function (isActive) {
   if (isActive) {
-    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(PIN_MAIN_WIDTH))) + ', ' + (Math.round(pinMainSelector.offsetTop + PIN_MAIN_HEIGHT)); // координаты острого конца метки
+    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(pin.mainWidth))) + ', ' + (Math.round(pinMainSelector.offsetTop + pin.mapHeight)); // координаты острого конца метки
   } else {
     addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2)); // если страница не активна, координаты метки - центр карты
   }
@@ -303,6 +301,8 @@ var addAddress = function (isActive) {
 var checkGuestsValidity = function () {
   if (guestsCountField.value === '0') {
     guestsCountField.setCustomValidity('Минимальное количество гостей: 1');
+  } else if (guestsCountField.value > roomsCountField.value) {
+    guestsCountField.setCustomValidity('Слишком много гостей');
   } else {
     guestsCountField.setCustomValidity('');
   }
@@ -311,9 +311,9 @@ var checkGuestsValidity = function () {
 // валидация поля комнат
 var checkRoomsValidity = function () {
   if (roomsCountField.value === '100') {
-    roomsCountField.setCustomValidity('Недопустимое значение');
-  } else if (guestsCountField.value > roomsCountField.value) {
-    roomsCountField.setCustomValidity('Недостаточно комнат');
+    roomsCountField.setCustomValidity('Не для гостей');
+  } else if (roomsCountField.value < guestsCountField.value) {
+    guestsCountField.setCustomValidity('Слишком много гостей');
   } else {
     roomsCountField.setCustomValidity('');
   }
