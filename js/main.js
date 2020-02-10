@@ -30,11 +30,11 @@ var TYPE_OF_HOUSES = [
 ];
 
 var HOUSES_NAMES = {
-  palace: 'Дворец',
-  flat: 'Квартира',
-  house: 'Дом',
-  bungalo: 'bungalo'
-}
+  PALACE: 'Дворец',
+  FLAT: 'Квартира',
+  HOUSE: 'Дом',
+  BUNGALO: 'Бунгало'
+};
 
 var PRICES = [
   5000,
@@ -100,6 +100,7 @@ var ads = [];
 var EXCLUDING_NUMBER = 1;
 
 var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var cardTemplate = document.querySelector('#card').content;
@@ -173,39 +174,12 @@ var renderPin = function (pin) {
   return pinElement;
 };
 
-// возвращает клонированные объекты
-var generatePins = function (array) {
-  var fragment = document.createDocumentFragment();
-
-  for (var i = 0; i < array.length; i++) {
-    fragment.appendChild(renderPin(array[i]));
-  }
-
-  map.querySelector('.map__pins').appendChild(fragment);
-};
-
 // создает DOM-элементы
 var createElement = function (tagName, className) {
   var element = document.createElement(tagName);
   element.classList.add(className);
 
   return element;
-};
-
-
-// клонирует преимущества
-var generateFeatures = function (array) {
-  var featuresFragment = document.createDocumentFragment();
-  var featureSpecialClass = '';
-  var featuresItem;
-
-  for (var i = 0; i < array.length; i++) {
-    featuresItem = createElement('li', 'popup__feature');
-    featureSpecialClass = 'popup__feature--' + array[i];
-    featuresItem.classList.add(featureSpecialClass);
-    featuresFragment.appendChild(featuresItem);
-  }
-  return featuresFragment;
 };
 
 // создает изображение
@@ -229,14 +203,32 @@ var getPhotos = function (array) {
   return photosFragment;
 };
 
+// клонирует преимущества
+var generateFeatures = function (array) {
+  var featuresFragment = document.createDocumentFragment();
+  var featureSpecialClass = '';
+  var featuresItem;
+
+  for (var i = 0; i < array.length; i++) {
+    featuresItem = createElement('li', 'popup__feature');
+    featureSpecialClass = 'popup__feature--' + array[i];
+    featuresItem.classList.add(featureSpecialClass);
+    featuresFragment.appendChild(featuresItem);
+  }
+  return featuresFragment;
+};
+
+
 // отрисовка карточки
 var renderCard = function (ad) {
   var cardElement = cardTemplate.cloneNode(true);
 
+  var typeOfHouse = ad.offer.type.toUpperCase();
+
   cardElement.querySelector('.popup__title').textContent = ad.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  cardElement.querySelector('.popup__type').textContent = HOUSES_NAMES[ad.offer.type];
+  cardElement.querySelector('.popup__type').textContent = HOUSES_NAMES[typeOfHouse];
   cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   cardElement.querySelector('.popup__features').innerHTML = '';
@@ -249,16 +241,23 @@ var renderCard = function (ad) {
   return cardElement;
 };
 
-// добавляет карточку на страницу
-var generateCards = function (card) {
+// возвращает клонированные объекты
+var generateThings = function (array, area, render) {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderCard(card));
 
-  map.appendChild(fragment);
+  if (Array.isArray(array)) {
+    for (var i = 0; i < array.length; i++) {
+      fragment.appendChild(render(array[i]));
+    }
+  } else {
+    fragment.appendChild(render(array));
+  }
+
+  area.appendChild(fragment);
 };
 
-
 getAds(ads, TOTAL_ADS);
-generatePins(ads);
-generateCards(ads[0]);
+generateThings(ads, mapPins, renderPin);
+generateThings(ads[0], map, renderCard);
+
 map.classList.remove('map--faded');
