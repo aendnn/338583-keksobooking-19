@@ -291,9 +291,13 @@ var changeFieldsetsState = function (array, isActive) {
 // заполняет поле с адресом
 var addAddress = function (isActive) {
   if (isActive) {
-    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(pin.mainWidth))) + ', ' + (Math.round(pinMainSelector.offsetTop + pin.mapHeight)); // координаты острого конца метки
+    // координаты острого конца метки
+    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(pin.mainWidth))) +
+      ', ' +
+      (Math.round(pinMainSelector.offsetTop + pin.mainHeight));
   } else {
-    addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2)); // если страница не активна, координаты метки - центр карты
+    // если страница не активна, координаты метки - центр карты
+    addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2));
   }
 };
 
@@ -311,7 +315,7 @@ var checkGuestsValidity = function () {
 // валидация поля комнат
 var checkRoomsValidity = function () {
   if (roomsCountField.value === '100') {
-    roomsCountField.setCustomValidity('Не для гостей');
+    roomsCountField.setCustomValidity('Недопустимое значение');
   } else if (roomsCountField.value < guestsCountField.value) {
     guestsCountField.setCustomValidity('Слишком много гостей');
   } else {
