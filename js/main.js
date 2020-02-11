@@ -302,9 +302,11 @@ var addAddress = function (isActive) {
 };
 
 // валидация поля гостей
-var checkGuestsValidity = function () {
-  if (guestsCountField.value === '0') {
+var validateGuestsField = function () {
+  if (guestsCountField.value === '0' && roomsCountField.value !== '100') {
     guestsCountField.setCustomValidity('Минимальное количество гостей: 1');
+  } else if (roomsCountField.value === '100' && guestsCountField.value !== '0') {
+    guestsCountField.setCustomValidity('Не для гостей');
   } else if (guestsCountField.value > roomsCountField.value) {
     guestsCountField.setCustomValidity('Слишком много гостей');
   } else {
@@ -312,14 +314,26 @@ var checkGuestsValidity = function () {
   }
 };
 
-// валидация поля комнат
-var checkRoomsValidity = function () {
-  if (roomsCountField.value === '100') {
-    roomsCountField.setCustomValidity('Недопустимое значение');
-  } else if (roomsCountField.value < guestsCountField.value) {
-    guestsCountField.setCustomValidity('Слишком много гостей');
-  } else {
-    roomsCountField.setCustomValidity('');
+// обработчик измененения поля гостей
+var onGuestsCountFieldChange = function () {
+  validateGuestsField();
+};
+
+// по клику на метку активируется страница
+var onPinMainMouseDown = function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.button === LEFT_MOUSE_KEYCODE) {
+      activePage();
+    }
+  }
+};
+
+// по клику на enter активируется страница
+var onPinMainKeydown = function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.key === ENTER_KEY) {
+      activePage();
+    }
   }
 };
 
@@ -333,29 +347,9 @@ var activePage = function () {
   generatePins(ads);
 };
 
-guestsCountField.addEventListener('change', function () {
-  checkGuestsValidity();
-});
-
-roomsCountField.addEventListener('change', function () {
-  checkRoomsValidity();
-});
-
-pinMainSelector.addEventListener('mousedown', function (evt) {
-  if (map.classList.contains('map--faded')) {
-    if (evt.button === LEFT_MOUSE_KEYCODE) {
-      activePage();
-    }
-  }
-});
-
-pinMainSelector.addEventListener('keydown', function (evt) {
-  if (map.classList.contains('map--faded')) {
-    if (evt.key === ENTER_KEY) {
-      activePage();
-    }
-  }
-});
+guestsCountField.addEventListener('change', onGuestsCountFieldChange);
+pinMainSelector.addEventListener('mousedown', onPinMainMouseDown);
+pinMainSelector.addEventListener('keydown', onPinMainKeydown);
 
 changeFieldsetsState(fieldsets, false);
 addAddress(false);
