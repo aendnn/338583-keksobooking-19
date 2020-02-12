@@ -29,7 +29,7 @@ var TYPE_OF_HOUSES = [
   'bungalo'
 ];
 
-var housesNames = {
+var HousesNames = {
   PALACE: 'Дворец',
   FLAT: 'Квартира',
   HOUSE: 'Дом',
@@ -228,7 +228,7 @@ var renderCard = function (ad) {
   cardElement.querySelector('.popup__title').textContent = ad.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  cardElement.querySelector('.popup__type').textContent = housesNames[typeOfHouse];
+  cardElement.querySelector('.popup__type').textContent = HousesNames[typeOfHouse];
   cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   cardElement.querySelector('.popup__features').innerHTML = '';
