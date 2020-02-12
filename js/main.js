@@ -117,6 +117,7 @@ var pin = {
 };
 
 var template = document.querySelector('#pin').content.querySelector('.map__pin');
+var cardTemplate = document.querySelector('#card').content;
 
 var form = document.querySelector('.ad-form');
 var fieldsets = form.querySelectorAll('fieldset');
