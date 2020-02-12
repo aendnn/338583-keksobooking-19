@@ -29,7 +29,7 @@ var TYPE_OF_HOUSES = [
   'bungalo'
 ];
 
-var housesNames = {
+var HousesNames = {
   PALACE: 'Дворец',
   FLAT: 'Квартира',
   HOUSE: 'Дом',
