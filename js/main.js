@@ -303,22 +303,31 @@ var addAddress = function (isActive) {
   }
 };
 
-// валидация поля гостей
-var validateGuestsField = function () {
-  if (guestsCountField.value === '0' && roomsCountField.value !== '100') {
-    guestsCountField.setCustomValidity('Минимальное количество гостей: 1');
-  } else if (roomsCountField.value === '100' && guestsCountField.value !== '0') {
-    guestsCountField.setCustomValidity('Не для гостей');
-  } else if (guestsCountField.value > roomsCountField.value) {
-    guestsCountField.setCustomValidity('Слишком много гостей');
-  } else {
+// валидация полей
+var validateGuestsAndRooms = function () {
+  roomsCountField.setCustomValidity('Введите корректное значение');
+  guestsCountField.setCustomValidity('Слишком много гостей');
+
+  if (roomsCountField.value === guestsCountField.value) {
+    roomsCountField.setCustomValidity('');
+    guestsCountField.setCustomValidity('');
+    return;
+  } else if ((roomsCountField.value !== '100') && (roomsCountField.value > guestsCountField.value) && (guestsCountField.value !== '0')) {
+    roomsCountField.setCustomValidity('');
+    guestsCountField.setCustomValidity('');
+  } else if (roomsCountField.value === '100' && guestsCountField.value === '0') {
+    roomsCountField.setCustomValidity('');
     guestsCountField.setCustomValidity('');
   }
 };
 
 // обработчик измененения поля гостей
 var onGuestsCountFieldChange = function () {
-  validateGuestsField();
+  validateGuestsAndRooms();
+};
+
+var onRoomsCountFieldChange = function () {
+  validateGuestsAndRooms();
 };
 
 // по клику на метку активируется страница
@@ -351,6 +360,7 @@ var activePage = function () {
 };
 
 guestsCountField.addEventListener('change', onGuestsCountFieldChange);
+roomsCountField.addEventListener('change', onRoomsCountFieldChange);
 pinMainSelector.addEventListener('mousedown', onPinMainSelectorMouseDown);
 pinMainSelector.addEventListener('keydown', onPinMainSelectorKeydown);
 
