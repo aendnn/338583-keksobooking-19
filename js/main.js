@@ -97,6 +97,7 @@ var LEFT_MOUSE_KEYCODE = 0;
 var ads = [];
 
 var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
 var mapWidth = map.offsetWidth;
 var mapHeight = map.offsetHeight;
 
@@ -345,7 +346,8 @@ var activePage = function () {
   changeFieldsetsState(fieldsets, true);
   addAddress(true);
   getAds(ads, TOTAL_ADS);
-  generatePins(ads);
+  generateThings(ads, mapPins, renderPin);
+  generateThings(ads, map, renderCard);
 };
 
 guestsCountField.addEventListener('change', onGuestsCountFieldChange);
