@@ -320,7 +320,7 @@ var onGuestsCountFieldChange = function () {
 };
 
 // по клику на метку активируется страница
-var onPinMainMouseDown = function (evt) {
+var onPinMainSelectorMouseDown = function (evt) {
   if (map.classList.contains('map--faded')) {
     if (evt.button === LEFT_MOUSE_KEYCODE) {
       activePage();
@@ -329,7 +329,7 @@ var onPinMainMouseDown = function (evt) {
 };
 
 // по клику на enter активируется страница
-var onPinMainKeydown = function (evt) {
+var onPinMainSelectorKeydown = function (evt) {
   if (map.classList.contains('map--faded')) {
     if (evt.key === ENTER_KEY) {
       activePage();
@@ -348,8 +348,8 @@ var activePage = function () {
 };
 
 guestsCountField.addEventListener('change', onGuestsCountFieldChange);
-pinMainSelector.addEventListener('mousedown', onPinMainMouseDown);
-pinMainSelector.addEventListener('keydown', onPinMainKeydown);
+pinMainSelector.addEventListener('mousedown', onPinMainSelectorMouseDown);
+pinMainSelector.addEventListener('keydown', onPinMainSelectorKeydown);
 
 changeFieldsetsState(fieldsets, false);
 addAddress(false);
