@@ -85,25 +85,46 @@ var PHOTOS_LIST = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var PIN = {
-  width: 50,
-  height: 40,
-  xMax: 980,
-  yMin: 130,
-  yMax: 630
-};
-var pinPointer = PIN.width / 2;
-
 var TOTAL_ADS = 8;
-var ads = [];
-
 var EXCLUDING_NUMBER = 1;
+
+var PIN_Y_MIN = 130;
+var PIN_Y_MAX = 630;
+
+var ENTER_KEY = 'Enter';
+var LEFT_MOUSE_KEYCODE = 0;
+
+var ads = [];
 
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var mapWidth = map.offsetWidth;
+var mapHeight = map.offsetHeight;
 
+var pinSelector = document.querySelector('.map__pin');
+var pinMainSelector = document.querySelector('.map__pin--main');
+var pin = {
+  width: pinSelector.offsetWidth,
+  height: pinSelector.offsetHeight,
+  xMax: mapWidth,
+  yMin: PIN_Y_MIN,
+  yMax: PIN_Y_MAX,
+  mainHeight: pinMainSelector.offsetHeight,
+  mainWidth: pinMainSelector.offsetWidth,
+  getPointer: function (width) {
+    var center = width / 2;
+    return center;
+  }
+};
+
+var template = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('#card').content;
+
+var form = document.querySelector('.ad-form');
+var fieldsets = form.querySelectorAll('fieldset');
+var addressField = form.querySelector('#address');
+var roomsCountField = form.querySelector('#room_number');
+var guestsCountField = form.querySelector('#capacity');
 
 // возвращает случайное число
 var getRandomNumber = function (min, max) {
@@ -132,8 +153,8 @@ var getElements = function (array) {
 // возвращает массив с объявлениями
 var getAds = function (array, quantity) {
   for (var i = 0; i < quantity; i++) {
-    var locationX = getRandomNumber(0, (PIN.xMax - PIN.width - pinPointer + EXCLUDING_NUMBER));
-    var locationY = getRandomNumber(PIN.yMin, PIN.yMax + EXCLUDING_NUMBER - PIN.height);
+    var locationX = getRandomNumber(0, (pin.xMax - pin.width - pin.getPointer(pin.width) + EXCLUDING_NUMBER));
+    var locationY = getRandomNumber(pin.yMin, pin.yMax + EXCLUDING_NUMBER - pin.height);
 
     var ad = {
       author: {
@@ -163,13 +184,13 @@ var getAds = function (array, quantity) {
 };
 
 // возвращает отрисованную метку
-var renderPin = function (pin) {
-  var pinElement = pinTemplate.cloneNode(true);
+var renderPin = function (pinItem) {
+  var pinElement = template.cloneNode(true);
 
-  pinElement.style.left = pin.location.x + 'px';
-  pinElement.style.top = pin.location.y + 'px';
-  pinElement.querySelector('img').src = pin.author.avatar;
-  pinElement.querySelector('img').alt = pin.offer.title;
+  pinElement.style.left = pinItem.location.x + 'px';
+  pinElement.style.top = pinItem.location.y + 'px';
+  pinElement.querySelector('img').src = pinItem.author.avatar;
+  pinElement.querySelector('img').alt = pinItem.offer.title;
 
   return pinElement;
 };
@@ -256,8 +277,88 @@ var generateThings = function (array, area, render) {
   area.appendChild(fragment);
 };
 
-getAds(ads, TOTAL_ADS);
-generateThings(ads, mapPins, renderPin);
-generateThings(ads[0], map, renderCard);
+// добавляет или удаляет атрибуты disabled, в зависимости от флага isActive
+var changeFieldsetsState = function (array, isActive) {
+  if (isActive) {
+    for (var i = 0; i < array.length; i++) {
+      array[i].removeAttribute('disabled', 'disabled');
+    }
+  } else {
+    for (var j = 0; j < array.length; j++) {
+      array[j].setAttribute('disabled', 'disabled');
+    }
+  }
+};
 
-map.classList.remove('map--faded');
+// заполняет поле с адресом
+var addAddress = function (isActive) {
+  if (isActive) {
+    // координаты острого конца метки
+    addressField.value = (Math.round(pinMainSelector.offsetLeft + pin.getPointer(pin.mainWidth))) +
+      ', ' +
+      (Math.round(pinMainSelector.offsetTop + pin.mainHeight));
+  } else {
+    // если страница не активна, координаты метки - центр карты
+    addressField.value = (Math.round(mapWidth / 2)) + ', ' + (Math.round(mapHeight / 2));
+  }
+};
+
+// валидация полей
+var validateGuestsAndRooms = function () {
+  roomsCountField.setCustomValidity('Введите корректное значение');
+  guestsCountField.setCustomValidity('Слишком много гостей');
+
+  if (roomsCountField.value === guestsCountField.value) {
+    roomsCountField.setCustomValidity('');
+    guestsCountField.setCustomValidity('');
+  } else if ((roomsCountField.value !== '100') && (roomsCountField.value > guestsCountField.value) && (guestsCountField.value !== '100')) {
+    roomsCountField.setCustomValidity('');
+    guestsCountField.setCustomValidity('');
+  }
+};
+
+// обработчик измененения поля гостей
+var onGuestsCountFieldChange = function () {
+  validateGuestsAndRooms();
+};
+
+var onRoomsCountFieldChange = function () {
+  validateGuestsAndRooms();
+};
+
+// по клику на метку активируется страница
+var onPinMainSelectorMouseDown = function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.button === LEFT_MOUSE_KEYCODE) {
+      activePage();
+    }
+  }
+};
+
+// по клику на enter активируется страница
+var onPinMainSelectorKeydown = function (evt) {
+  if (map.classList.contains('map--faded')) {
+    if (evt.key === ENTER_KEY) {
+      activePage();
+    }
+  }
+};
+
+// переключает страницу в активное состояние
+var activePage = function () {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  changeFieldsetsState(fieldsets, true);
+  addAddress(true);
+  getAds(ads, TOTAL_ADS);
+  generateThings(ads, mapPins, renderPin);
+  generateThings(ads, map, renderCard);
+};
+
+guestsCountField.addEventListener('change', onGuestsCountFieldChange);
+roomsCountField.addEventListener('change', onRoomsCountFieldChange);
+pinMainSelector.addEventListener('mousedown', onPinMainSelectorMouseDown);
+pinMainSelector.addEventListener('keydown', onPinMainSelectorKeydown);
+
+changeFieldsetsState(fieldsets, false);
+addAddress(false);
