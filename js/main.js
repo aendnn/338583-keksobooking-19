@@ -311,11 +311,7 @@ var validateGuestsAndRooms = function () {
   if (roomsCountField.value === guestsCountField.value) {
     roomsCountField.setCustomValidity('');
     guestsCountField.setCustomValidity('');
-    return;
-  } else if ((roomsCountField.value !== '100') && (roomsCountField.value > guestsCountField.value) && (guestsCountField.value !== '0')) {
-    roomsCountField.setCustomValidity('');
-    guestsCountField.setCustomValidity('');
-  } else if (roomsCountField.value === '100' && guestsCountField.value === '0') {
+  } else if ((roomsCountField.value !== '100') && (roomsCountField.value > guestsCountField.value) && (guestsCountField.value !== '100')) {
     roomsCountField.setCustomValidity('');
     guestsCountField.setCustomValidity('');
   }
