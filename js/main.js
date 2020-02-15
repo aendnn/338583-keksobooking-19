@@ -101,7 +101,7 @@ var mapPins = map.querySelector('.map__pins');
 var mapWidth = map.offsetWidth;
 var mapHeight = map.offsetHeight;
 
-var pinSelector = document.querySelector('.map__pin');
+var pinSelector = map.querySelector('.map__pin');
 var pinMainSelector = document.querySelector('.map__pin--main');
 var pin = {
   width: pinSelector.offsetWidth,
@@ -125,6 +125,7 @@ var fieldsets = form.querySelectorAll('fieldset');
 var addressField = form.querySelector('#address');
 var roomsCountField = form.querySelector('#room_number');
 var guestsCountField = form.querySelector('#capacity');
+
 
 // возвращает случайное число
 var getRandomNumber = function (min, max) {
@@ -326,6 +327,16 @@ var onRoomsCountFieldChange = function () {
   validateGuestsAndRooms();
 };
 
+// переключает страницу в активное состояние
+var activePage = function () {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  changeFieldsetsState(fieldsets, true);
+  addAddress(true);
+  getAds(ads, TOTAL_ADS);
+  generateThings(ads, mapPins, renderPin);
+};
+
 // по клику на метку активируется страница
 var onPinMainSelectorMouseDown = function (evt) {
   if (map.classList.contains('map--faded')) {
@@ -344,16 +355,52 @@ var onPinMainSelectorKeydown = function (evt) {
   }
 };
 
-// переключает страницу в активное состояние
-var activePage = function () {
-  map.classList.remove('map--faded');
-  form.classList.remove('ad-form--disabled');
-  changeFieldsetsState(fieldsets, true);
-  addAddress(true);
-  getAds(ads, TOTAL_ADS);
-  generateThings(ads, mapPins, renderPin);
-  generateThings(ads, map, renderCard);
+
+var getCard = function (left, top) {
+  var closeBtn;
+
+  for (var i = 0; i < ads.length; i++) {
+    var coordinateX = ads[i].location.x.toString();
+    var coordinateY = ads[i].location.y.toString();
+
+    if (left === coordinateX && top === coordinateY) {
+      if (!document.querySelector('.map__card')) {
+        generateThings(ads[i], map, renderCard);
+        closeBtn = document.querySelector('.popup__close');
+        closeBtn.addEventListener('click', onCloseBtnClick);
+        closeBtn.addEventListener('keydown', onCloseBtnKeydown);
+      }
+    }
+  }
 };
+
+var onPinsClick = function (evt) {
+  var target = evt.target;
+  var targetX = target.style.left.slice(0, -2);
+  var targetY = target.style.top.slice(0, -2);
+
+  if (target.matches('.map__pin')) {
+    getCard(targetX, targetY);
+  }
+};
+
+var onCloseBtnClick = function () {
+  var card = document.querySelector('.popup');
+
+  if (card !== null) {
+    card.remove();
+  }
+};
+
+var onCloseBtnKeydown = function (evt) {
+  var card = document.querySelector('.popup');
+
+  if (card !== null && evt.key === ENTER_KEY) {
+    card.remove();
+  }
+};
+
+mapPins.addEventListener('click', onPinsClick);
 
 guestsCountField.addEventListener('change', onGuestsCountFieldChange);
 roomsCountField.addEventListener('change', onRoomsCountFieldChange);
