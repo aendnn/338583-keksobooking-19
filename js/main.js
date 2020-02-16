@@ -36,6 +36,13 @@ var HousesNames = {
   BUNGALO: 'Бунгало'
 };
 
+var HousesPrices = {
+  PALACE: 10000,
+  FLAT: 1000,
+  HOUSE: 5000,
+  BUNGALO: 0
+};
+
 var PRICES = [
   5000,
   10000,
@@ -94,6 +101,9 @@ var PIN_Y_MAX = 630;
 var ENTER_KEY = 'Enter';
 var LEFT_MOUSE_KEYCODE = 0;
 
+var MIN_TITLE_LENGTH = 30;
+var MAX_TITLE_LENGTH = 100;
+
 var ads = [];
 
 var map = document.querySelector('.map');
@@ -122,10 +132,18 @@ var cardTemplate = document.querySelector('#card').content;
 
 var form = document.querySelector('.ad-form');
 var fieldsets = form.querySelectorAll('fieldset');
+
+var submit = document.querySelector('.ad-form__submit');
 var addressField = form.querySelector('#address');
 var roomsCountField = form.querySelector('#room_number');
 var guestsCountField = form.querySelector('#capacity');
-
+var titleField = form.querySelector('#title');
+var typeField = form.querySelector('#type');
+var priceField = form.querySelector('#price');
+var timeInField = form.querySelector('#timein');
+var timeOutField = form.querySelector('#timeout');
+var imagesField = form.querySelector('#images');
+var avatarField = form.querySelector('#avatar');
 
 // возвращает случайное число
 var getRandomNumber = function (min, max) {
@@ -304,7 +322,9 @@ var addAddress = function (isActive) {
   }
 };
 
-// валидация полей
+// валидация
+
+// валидация полей гостей и комнат
 var validateGuestsAndRooms = function () {
   roomsCountField.setCustomValidity('Введите корректное значение');
   guestsCountField.setCustomValidity('Слишком много гостей');
@@ -318,13 +338,138 @@ var validateGuestsAndRooms = function () {
   }
 };
 
-// обработчик измененения поля гостей
-var onGuestsCountFieldChange = function () {
-  validateGuestsAndRooms();
+// валидация файлов
+var validateFiles = function (file) {
+  file.setCustomValidity('Выберите изображение');
+
+  if (file.files[0] && (file.files[0].type === 'image/jpeg' || file.files[0].type === 'image/png')) {
+    file.setCustomValidity('');
+  }
 };
 
-var onRoomsCountFieldChange = function () {
-  validateGuestsAndRooms();
+// валидация поля заголовка
+var validateTitle = function () {
+  titleField.setCustomValidity('Минимум 30 символов, максимум - 100, сейчас: ' + titleField.value.length);
+
+  if ((titleField.value.length >= MIN_TITLE_LENGTH) && (titleField.value.length <= MAX_TITLE_LENGTH)) {
+    titleField.setCustomValidity('');
+  }
+};
+
+// валидация полей чекин/чекаут
+var validateTime = function () {
+  timeInField.setCustomValidity('Выберите корректное значение');
+  timeOutField.setCustomValidity('Выберите корректное значение');
+
+  if (timeInField.value === timeOutField.value) {
+    timeInField.setCustomValidity('');
+    timeOutField.setCustomValidity('');
+  }
+};
+
+// изменяет значение плейсхолдера в зависимости от типа жилья
+var changePlaceholder = function () {
+  for (var i = 0; i < TYPE_OF_HOUSES.length; i++) {
+    if (typeField.value === TYPE_OF_HOUSES[i]) {
+      priceField.placeholder = HousesPrices[TYPE_OF_HOUSES[i].toUpperCase()];
+    }
+  }
+};
+
+// валидация полей стоимости и типа жилья
+var validatePricesAndTypes = function () {
+  priceField.setCustomValidity('Введите корректную стоимость');
+  var numberPrice = parseInt(priceField.value, 10);
+
+  changePlaceholder();
+
+  if (priceField.type === 'number' && (numberPrice > 0 && numberPrice <= 1000000)) {
+    typeField.setCustomValidity('');
+  }
+
+  if (typeField.value === 'bungalo' && numberPrice >= 0) {
+    typeField.setCustomValidity('');
+    priceField.setCustomValidity('');
+  } else if (typeField.value === 'flat' && numberPrice >= 1000) {
+    typeField.setCustomValidity('');
+    priceField.setCustomValidity('');
+  } else if (typeField.value === 'house' && numberPrice >= 5000) {
+    typeField.setCustomValidity('');
+    priceField.setCustomValidity('');
+  } else if (typeField.value === 'palace' && numberPrice >= 10000) {
+    typeField.setCustomValidity('');
+    priceField.setCustomValidity('');
+  }
+};
+
+var showFormErrors = function (evt) {
+  for (var i = 0; i < form.elements.length; i++) {
+    if (!form.elements[i].validity.valid) {
+      evt.preventDefault();
+      form.elements[i].style.borderColor = 'red';
+      submit.setAttribute('disabled', 'disabled');
+
+      if (form.elements[i].type === 'file') {
+        document.querySelector('.ad-form__drop-zone').style.borderColor = 'red';
+        document.querySelector('.ad-form-header__drop-zone').style.borderColor = 'red';
+      }
+    }
+  }
+};
+
+var validateFields = function () {
+  addressField.setAttribute('readonly', 'readonly');
+
+  var onAvatarFieldChange = function () {
+    validateFiles(avatarField);
+  };
+
+  var onImagesFieldChange = function () {
+    validateFiles(imagesField);
+  };
+
+  var onGuestsCountFieldChange = function () {
+    validateGuestsAndRooms();
+  };
+
+  var onRoomsCountFieldChange = function () {
+    validateGuestsAndRooms();
+  };
+
+  var onTitleFieldChange = function () {
+    validateTitle();
+  };
+
+  var onPriceFieldChange = function () {
+    validatePricesAndTypes();
+  };
+
+  var onTypeFieldChange = function () {
+    validatePricesAndTypes();
+  };
+
+  var onTimeInChange = function () {
+    validateTime();
+  };
+
+  var onTimeOutChange = function () {
+    validatePricesAndTypes();
+  };
+
+  var onSubmitForm = function () {
+    showFormErrors();
+  };
+
+  guestsCountField.addEventListener('change', onGuestsCountFieldChange);
+  roomsCountField.addEventListener('change', onRoomsCountFieldChange);
+  titleField.addEventListener('change', onTitleFieldChange);
+  typeField.addEventListener('change', onTypeFieldChange);
+  priceField.addEventListener('change', onPriceFieldChange);
+  timeInField.addEventListener('change', onTimeInChange);
+  timeOutField.addEventListener('change', onTimeOutChange);
+  imagesField.addEventListener('change', onImagesFieldChange);
+  avatarField.addEventListener('change', onAvatarFieldChange);
+  form.addEventListener('submit', onSubmitForm);
 };
 
 // переключает страницу в активное состояние
@@ -333,6 +478,7 @@ var activePage = function () {
   form.classList.remove('ad-form--disabled');
   changeFieldsetsState(fieldsets, true);
   addAddress(true);
+  validateFields();
   getAds(ads, TOTAL_ADS);
   generateThings(ads, mapPins, renderPin);
 };
@@ -402,8 +548,6 @@ var onCloseBtnKeydown = function (evt) {
 
 mapPins.addEventListener('click', onPinsClick);
 
-guestsCountField.addEventListener('change', onGuestsCountFieldChange);
-roomsCountField.addEventListener('change', onRoomsCountFieldChange);
 pinMainSelector.addEventListener('mousedown', onPinMainSelectorMouseDown);
 pinMainSelector.addEventListener('keydown', onPinMainSelectorKeydown);
 
