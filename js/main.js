@@ -502,8 +502,27 @@ var onPinMainSelectorKeydown = function (evt) {
 };
 
 
-var getCard = function (left, top) {
+var viewCard = function (left, top) {
+  var card;
   var closeBtn;
+
+  var onCloseBtnClick = function () {
+    if (card !== null) {
+      card.remove();
+    }
+  };
+
+  var onCloseBtnKeydown = function (evt) {
+    if (card !== null && evt.key === ENTER_KEY) {
+      card.remove();
+    }
+  };
+
+  var closePopup = function () {
+    closeBtn = document.querySelector('.popup__close');
+    closeBtn.addEventListener('click', onCloseBtnClick);
+    closeBtn.addEventListener('keydown', onCloseBtnKeydown);
+  };
 
   for (var i = 0; i < ads.length; i++) {
     var coordinateX = ads[i].location.x.toString();
@@ -512,41 +531,25 @@ var getCard = function (left, top) {
     if (left === coordinateX && top === coordinateY) {
       if (!document.querySelector('.map__card')) {
         generateThings(ads[i], map, renderCard);
-        closeBtn = document.querySelector('.popup__close');
-        closeBtn.addEventListener('click', onCloseBtnClick);
-        closeBtn.addEventListener('keydown', onCloseBtnKeydown);
+        card = document.querySelector('.popup');
+        closePopup();
       }
     }
   }
 };
 
-var onPinsClick = function (evt) {
-  var target = evt.target;
-  var targetX = target.style.left.slice(0, -2);
-  var targetY = target.style.top.slice(0, -2);
+var onMapPinsClick = function (evt) {
+  var target = evt.target.parentElement;
 
-  if (target.matches('.map__pin')) {
-    getCard(targetX, targetY);
+  if (target.matches('.js-pin')) {
+    var targetX = target.style.left.slice(0, -2);
+    var targetY = target.style.top.slice(0, -2);
+
+    viewCard(targetX, targetY);
   }
 };
 
-var onCloseBtnClick = function () {
-  var card = document.querySelector('.popup');
-
-  if (card !== null) {
-    card.remove();
-  }
-};
-
-var onCloseBtnKeydown = function (evt) {
-  var card = document.querySelector('.popup');
-
-  if (card !== null && evt.key === ENTER_KEY) {
-    card.remove();
-  }
-};
-
-mapPins.addEventListener('click', onPinsClick);
+mapPins.addEventListener('click', onMapPinsClick);
 
 pinMainSelector.addEventListener('mousedown', onPinMainSelectorMouseDown);
 pinMainSelector.addEventListener('keydown', onPinMainSelectorKeydown);
