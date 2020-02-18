@@ -336,6 +336,10 @@ var validateGuestsAndRooms = function () {
     roomsCountField.setCustomValidity('');
     guestsCountField.setCustomValidity('');
   }
+
+  if (!roomsCountField.validity.valid) {
+    roomsCountField.style.borderColor = 'red';
+  }
 };
 
 // валидация файлов
@@ -345,6 +349,10 @@ var validateFiles = function (file) {
   if (file.files[0] && (file.files[0].type === 'image/jpeg' || file.files[0].type === 'image/png')) {
     file.setCustomValidity('');
   }
+
+  if (!file.validity.valid) {
+    file.querySelector('label').style.borderColor = 'red';
+  }
 };
 
 // валидация поля заголовка
@@ -353,6 +361,10 @@ var validateTitle = function () {
 
   if ((titleField.value.length >= MIN_TITLE_LENGTH) && (titleField.value.length <= MAX_TITLE_LENGTH)) {
     titleField.setCustomValidity('');
+  }
+
+  if (!titleField.validity.valid) {
+    titleField.style.borderColor = 'red';
   }
 };
 
@@ -364,6 +376,10 @@ var validateTime = function () {
   if (timeInField.value === timeOutField.value) {
     timeInField.setCustomValidity('');
     timeOutField.setCustomValidity('');
+  }
+
+  if (!titleField.validity.valid) {
+    timeInField.style.borderColor = 'red';
   }
 };
 
@@ -379,12 +395,14 @@ var changePlaceholder = function () {
 // валидация полей стоимости и типа жилья
 var validatePricesAndTypes = function () {
   priceField.setCustomValidity('Введите корректную стоимость');
+  typeField.setCustomValidity('Выберите тип жилья соответствующий стоимости');
   var numberPrice = parseInt(priceField.value, 10);
 
   changePlaceholder();
 
-  if (priceField.type === 'number' && (numberPrice > 0 && numberPrice <= 1000000)) {
+  if (priceField.type === 'number' && (priceField.value.length !== 0 && priceField.value > '0' && priceField.value <= '1000000')) {
     typeField.setCustomValidity('');
+    priceField.setCustomValidity('');
   }
 
   if (typeField.value === 'bungalo' && numberPrice >= 0) {
@@ -400,19 +418,17 @@ var validatePricesAndTypes = function () {
     typeField.setCustomValidity('');
     priceField.setCustomValidity('');
   }
+
+  if (!priceField.validity.valid) {
+    priceField.style.borderColor = 'red';
+  }
 };
 
 var showFormErrors = function (evt) {
   for (var i = 0; i < form.elements.length; i++) {
     if (!form.elements[i].validity.valid) {
       evt.preventDefault();
-      form.elements[i].style.borderColor = 'red';
       submit.setAttribute('disabled', 'disabled');
-
-      if (form.elements[i].type === 'file') {
-        document.querySelector('.ad-form__drop-zone').style.borderColor = 'red';
-        document.querySelector('.ad-form-header__drop-zone').style.borderColor = 'red';
-      }
     }
   }
 };
@@ -453,7 +469,7 @@ var validateFields = function () {
   };
 
   var onTimeOutChange = function () {
-    validatePricesAndTypes();
+    validateTime();
   };
 
   var onSubmitForm = function () {
