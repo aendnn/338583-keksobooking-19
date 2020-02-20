@@ -521,6 +521,9 @@ var onPinMainSelectorKeydown = function (evt) {
 var viewCard = function (left, top) {
   var card;
   var closeBtn;
+  var i;
+  var ad;
+
 
   var onCloseBtnClick = function () {
     if (card !== null) {
@@ -540,17 +543,21 @@ var viewCard = function (left, top) {
     closeBtn.addEventListener('keydown', onCloseBtnKeydown);
   };
 
-  for (var i = 0; i < ads.length; i++) {
+  var getCoordinates = function (element, index) {
+    i = index;
     var coordinateX = ads[i].location.x.toString();
     var coordinateY = ads[i].location.y.toString();
+    return left === coordinateX && top === coordinateY;
+  };
 
-    if (left === coordinateX && top === coordinateY) {
-      if (!document.querySelector('.map__card')) {
-        generateThings(ads[i], map, renderCard);
-        card = document.querySelector('.popup');
-        closePopup();
-      }
-    }
+  if (ads.some(getCoordinates)) {
+    ad = ads[i];
+  }
+
+  if (!document.querySelector('.map__card')) {
+    generateThings(ad, map, renderCard);
+    card = document.querySelector('.popup');
+    closePopup();
   }
 };
 
