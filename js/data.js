@@ -86,8 +86,8 @@
   // возвращает массив с объявлениями
   var getAds = function (array, quantity) {
     for (var i = 0; i < quantity; i++) {
-      var locationX = window.random.getNumber(0, (window.pins.item.xMax - window.pins.item.width - window.pins.item.getPointer(window.pins.item.width) + window.util.EXCLUDING_NUMBER));
-      var locationY = window.random.getNumber(window.pins.item.yMin, window.pins.item.yMax + window.util.EXCLUDING_NUMBER - window.pins.item.height);
+      var locationX = window.random.getNumber(0, (window.pin.item.xMax - window.pin.item.width - window.pin.item.getPointer(window.pin.item.width) + window.util.EXCLUDING_NUMBER));
+      var locationY = window.random.getNumber(window.pin.item.yMin, window.pin.item.yMax + window.util.EXCLUDING_NUMBER - window.pin.item.height);
 
       var ad = {
         author: {

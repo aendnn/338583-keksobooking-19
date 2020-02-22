@@ -8,7 +8,9 @@
     BUNGALO: 0
   };
 
+  var fieldsets = window.util.form.querySelectorAll('fieldset');
   var submit = document.querySelector('.ad-form__submit');
+
   var addressField = window.util.form.querySelector('#address');
   var roomsCountField = window.util.form.querySelector('#room_number');
   var guestsCountField = window.util.form.querySelector('#capacity');
@@ -19,6 +21,33 @@
   var timeOutField = window.util.form.querySelector('#timeout');
   var imagesField = window.util.form.querySelector('#images');
   var avatarField = window.util.form.querySelector('#avatar');
+
+  // добавляет или удаляет атрибуты disabled, в зависимости от флага isActive
+  var changeFieldsetsState = function (array, isActive) {
+    if (isActive) {
+      for (var i = 0; i < array.length; i++) {
+        array[i].removeAttribute('disabled', 'disabled');
+      }
+    } else {
+      for (var j = 0; j < array.length; j++) {
+        array[j].setAttribute('disabled', 'disabled');
+      }
+    }
+  };
+
+  // заполняет поле с адресом
+  var addAddress = function (isActive, x, y) {
+    if (isActive) {
+
+      if (x && y) {
+        addressField.value = x + ', ' + y;
+      }
+    } else {
+      // если страница не активна, координаты метки - центр карты
+      addressField.value = (Math.round(window.util.mapWidth / 2 - window.pin.item.width)) + ', ' + (Math.round(window.util.mapHeight / 2));
+    }
+  };
+
 
   // валидация полей гостей и комнат
   var validateGuestsAndRooms = function () {
@@ -187,7 +216,11 @@
   };
 
   window.form = {
-    validate: validateFields
+    validate: validateFields,
+    changeFieldsetsState: changeFieldsetsState,
+    fieldsets: fieldsets,
+    address: addressField,
+    addAddress: addAddress
   };
 
 })();

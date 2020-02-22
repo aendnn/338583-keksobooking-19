@@ -1,5 +1,6 @@
 'use strict';
 
+
 (function () {
   var cardTemplate = document.querySelector('#card').content;
 
@@ -76,56 +77,7 @@
     return cardElement;
   };
 
-  // просмотр карточки
-  var viewCard = function (left, top) {
-    var card;
-    var closeBtn;
-    var i;
-    var ad;
-
-
-    var onCloseBtnClick = function () {
-      if (card !== null) {
-        card.remove();
-      }
-    };
-
-    var onCloseBtnKeydown = function (evt) {
-      if (card !== null && evt.key === window.util.ENTER_KEY) {
-        card.remove();
-      }
-    };
-
-    var closePopup = function () {
-      closeBtn = document.querySelector('.popup__close');
-      closeBtn.addEventListener('click', onCloseBtnClick);
-      closeBtn.addEventListener('keydown', onCloseBtnKeydown);
-    };
-
-    var getCoordinates = function (element, index) {
-      i = index;
-      var coordinateX = window.data.ads[i].location.x.toString();
-      var coordinateY = window.data.ads[i].location.y.toString();
-      return left === coordinateX && top === coordinateY;
-    };
-
-    if (window.data.ads.some(getCoordinates)) {
-      ad = window.data.ads[i];
-    }
-
-    if (!document.querySelector('.map__card')) {
-      window.util.generate(ad, window.util.map, window.cards.render);
-      card = document.querySelector('.popup');
-      closePopup();
-    }
-  };
-
-  window.cards = {
-    create: createElement,
-    renderPhoto: renderPhoto,
-    getPhotos: getPhotos,
-    generateFeatures: generateFeatures,
+  window.card = {
     render: renderCard,
-    view: viewCard
   };
 })();
