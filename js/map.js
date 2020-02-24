@@ -4,11 +4,11 @@
   var mapPins = window.util.map.querySelector('.map__pins');
 
   // возвращает клонированные объекты
-  var generateThings = function (array, area, render) {
+  var generateThings = function (array, area, render, quantity) {
     var fragment = document.createDocumentFragment();
 
     if (Array.isArray(array)) {
-      for (var i = 0; i < array.length; i++) {
+      for (var i = 0; i < quantity; i++) {
         fragment.appendChild(render(array[i]));
       }
     } else {
@@ -55,8 +55,13 @@
     }
 
     if (!document.querySelector('.map__card')) {
-      window.map.generate(ad, window.util.map, window.card.render);
+      window.map.generate(ad, window.util.map, window.card.render, window.data.adsCount);
       card = document.querySelector('.popup');
+
+      if (ad.offer.features.length === 0) {
+        card.querySelector('.popup__features').style.display = 'none';
+      }
+
       closePopup();
     }
   };
