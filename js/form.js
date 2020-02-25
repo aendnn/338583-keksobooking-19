@@ -199,8 +199,10 @@
       validateTime();
     };
 
-    var onSubmitForm = function () {
+    var onSubmitForm = function (evt) {
       showFormErrors();
+      evt.preventDefault();
+      window.upload.form(new FormData(window.util.form), window.upload.showSuccess('Всё получилось!'), window.upload.showError('Ошибка'));
     };
 
     guestsCountField.addEventListener('change', onGuestsCountFieldChange);
@@ -212,7 +214,7 @@
     timeOutField.addEventListener('change', onTimeOutChange);
     imagesField.addEventListener('change', onImagesFieldChange);
     avatarField.addEventListener('change', onAvatarFieldChange);
-    window.util.form.addEventListener('submit', onSubmitForm);
+
   };
 
   window.form = {
