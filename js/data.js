@@ -2,7 +2,6 @@
 
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
-
   var TOTAL_ADS = 8;
   var TYPE_OF_HOUSES = [
     'palace',
@@ -22,46 +21,36 @@
     return ads;
   };
 
-  var load = function (error) {
+  // eslint-disable-next-line no-unused-vars
+  var load = function (url, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = window.util.TIMEOUT_IN_MS;
+    xhr.timeout = window.loadUtil.TIMEOUT_IN_MS;
 
-    var onLoad = function () {
-      window.util.checkStatus(xhr.status);
-    };
-
-    var onError = function () {
-      error('Ошибка соединения');
-    };
-
-    var onTimeout = function () {
-      error('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
-    };
-
-    xhr.addEventListener('load', onLoad);
-    xhr.addEventListener('error', onError);
-    xhr.addEventListener('timeout', onTimeout);
-
-    xhr.open('GET', URL, true);
-    xhr.overrideMimeType('text/html');
-    xhr.send();
-
-    if (xhr.readyState === 4) {
-      if (xhr.status === window.util.statusCode.OK) {
-        getAds(xhr.response);
-        window.map.generate(ads, window.map.mapPins, window.pin.render, TOTAL_ADS);
-      } else {
-        window.util.checkStatus(xhr.status);
+    var xhrLoadHandler = function () {
+      if (xhr.readyState === window.loadUtil.READY_STATE) {
+        if (xhr.status === window.loadUtil.statusCode.OK) {
+          getAds(xhr.response);
+          window.map.generate(ads, window.map.pins, window.pin.render, TOTAL_ADS);
+        } else {
+          window.loadUtil.checkStatus(xhr.status);
+        }
       }
-    }
+    };
 
+    xhr.addEventListener('load', xhrLoadHandler);
+    xhr.addEventListener('error', window.loadUtil.xhrErrorHandler);
+    xhr.addEventListener('timeout', window.loadUtil.xhrTimeoutHandler);
+
+    xhr.open('GET', url);
+    xhr.send();
   };
 
   window.data = {
     getAds: getAds,
     ads: ads,
     load: load,
-    TYPE_OF_HOUSES: TYPE_OF_HOUSES
+    TYPE_OF_HOUSES: TYPE_OF_HOUSES,
+    URL: URL
   };
 })();
