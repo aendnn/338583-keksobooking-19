@@ -5,7 +5,7 @@
   var top = window.pin.main.style.top.slice(0, -2);
 
   // по клику на метку активируется страница
-  var onPinMainSelectorMouseDown = function (evt) {
+  var pinMainSelectorMouseDownHandler = function (evt) {
     window.form.addAddress(true, left, top);
 
     if (window.util.map.classList.contains('map--faded')) {
@@ -16,7 +16,7 @@
   };
 
   // по клику на enter активируется страница
-  var onPinMainSelectorKeydown = function (evt) {
+  var pinMainSelectorKeyDownHandler = function (evt) {
     window.form.addAddress(true, left, top);
 
     if (window.util.map.classList.contains('map--faded')) {
@@ -27,7 +27,6 @@
   };
 
   var drag = function () {
-
     window.pin.main.addEventListener('mousedown', function (evt) {
       evt.preventDefault();
 
@@ -36,10 +35,10 @@
         y: evt.clientY
       };
 
-      var onMouseMove = function (moveEvt) {
+      var documentMouseMoveHandler = function (moveEvt) {
         moveEvt.preventDefault();
 
-        window.pin.main.removeEventListener('mousedown', onPinMainSelectorMouseDown);
+        window.pin.main.removeEventListener('mousedown', pinMainSelectorMouseDownHandler);
 
         var limits = {
           top: window.pin.item.yMin,
@@ -77,24 +76,20 @@
         window.form.addAddress(true, currentCoords.x, currentCoords.y);
       };
 
-      var onMouseUp = function (upEvt) {
+      var documentMouseUpHandler = function (upEvt) {
         upEvt.preventDefault();
 
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', documentMouseMoveHandler);
+        document.removeEventListener('mouseup', documentMouseUpHandler);
       };
 
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('mousemove', documentMouseMoveHandler);
+      document.addEventListener('mouseup', documentMouseUpHandler);
     });
   };
 
-  window.pin.main.addEventListener('keydown', onPinMainSelectorKeydown);
-  window.pin.main.addEventListener('mousedown', onPinMainSelectorMouseDown);
+  window.pin.main.addEventListener('keydown', pinMainSelectorKeyDownHandler);
+  window.pin.main.addEventListener('mousedown', pinMainSelectorMouseDownHandler);
 
-  window.mainPin = {
-    drag: drag
-  };
-
-  window.mainPin.drag();
+  drag();
 })();

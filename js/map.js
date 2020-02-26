@@ -20,28 +20,9 @@
 
   // просмотр карточки
   var viewCard = function (left, top) {
-    var card;
-    var closeBtn;
     var i;
     var ad;
-
-    var onCloseBtnClick = function () {
-      if (card !== null) {
-        card.remove();
-      }
-    };
-
-    var onCloseBtnKeydown = function (evt) {
-      if (card !== null && evt.key === window.util.ENTER_KEY) {
-        card.remove();
-      }
-    };
-
-    var closePopup = function () {
-      closeBtn = document.querySelector('.popup__close');
-      closeBtn.addEventListener('click', onCloseBtnClick);
-      closeBtn.addEventListener('keydown', onCloseBtnKeydown);
-    };
+    var card;
 
     var getCoordinates = function (element, index) {
       i = index;
@@ -54,6 +35,7 @@
       ad = window.data.ads[i];
     }
 
+
     if (!document.querySelector('.map__card')) {
       window.map.generate(ad, window.util.map, window.card.render, window.data.adsCount);
       card = document.querySelector('.popup');
@@ -62,12 +44,28 @@
         card.querySelector('.popup__features').style.display = 'none';
       }
 
-      closePopup();
+      var closeBtnClickHandler = function () {
+        window.dialog.closeByBtn(card);
+      };
+
+      var closeBtnKeyDownHandler = function (evt) {
+        window.dialog.closeByBtn(evt, card);
+      };
+
+      var documentKeyDownHandler = function (evt) {
+        window.dialog.closeByEsc(evt, card);
+      };
+
+
+      var closeBtn = document.querySelector('.popup__close');
+      closeBtn.addEventListener('click', closeBtnClickHandler);
+      closeBtn.addEventListener('keydown', closeBtnKeyDownHandler);
+      document.addEventListener('keydown', documentKeyDownHandler);
     }
   };
 
   // по клику на пин открывается соответствующая карточка
-  var onMapPinsClick = function (evt) {
+  var mapPinsClickHandler = function (evt) {
     var target = evt.target.parentElement;
 
     if (target.matches('.js-pin')) {
@@ -78,10 +76,10 @@
     }
   };
 
-  mapPins.addEventListener('click', onMapPinsClick);
+  mapPins.addEventListener('click', mapPinsClickHandler);
 
   window.map = {
-    mapPins: mapPins,
+    pins: mapPins,
     viewCard: viewCard,
     generate: generateThings
   };

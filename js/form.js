@@ -10,6 +10,7 @@
 
   var fieldsets = window.util.form.querySelectorAll('fieldset');
   var submit = document.querySelector('.ad-form__submit');
+  var reset = document.querySelector('.ad-form__reset');
 
   var addressField = window.util.form.querySelector('#address');
   var roomsCountField = window.util.form.querySelector('#room_number');
@@ -23,14 +24,14 @@
   var avatarField = window.util.form.querySelector('#avatar');
 
   // добавляет или удаляет атрибуты disabled, в зависимости от флага isActive
-  var changeFieldsetsState = function (array, isActive) {
-    if (isActive) {
+  var changeFieldsetsState = function (array, isActive, isSent) {
+    if (!isActive || isActive && isSent) {
       for (var i = 0; i < array.length; i++) {
-        array[i].removeAttribute('disabled', 'disabled');
+        array[i].setAttribute('disabled', 'disabled');
       }
     } else {
       for (var j = 0; j < array.length; j++) {
-        array[j].setAttribute('disabled', 'disabled');
+        array[j].removeAttribute('disabled', 'disabled');
       }
     }
   };
@@ -47,7 +48,6 @@
       addressField.value = (Math.round(window.util.mapWidth / 2 - window.pin.item.width)) + ', ' + (Math.round(window.util.mapHeight / 2));
     }
   };
-
 
   // валидация полей гостей и комнат
   var validateGuestsAndRooms = function () {
@@ -150,12 +150,17 @@
   };
 
   // если есть ошибки валидации форма не отправляется
-  var showFormErrors = function (evt) {
+  var showFormErrors = function () {
     for (var i = 0; i < window.util.form.elements.length; i++) {
       if (!window.util.form.elements[i].validity.valid) {
-        evt.preventDefault();
         submit.setAttribute('disabled', 'disabled');
       }
+    }
+  };
+
+  var btnResetHandler = function (evt) {
+    if (evt.target === submit) {
+      window.util.form.reset();
     }
   };
 
@@ -163,56 +168,59 @@
   var validateFields = function () {
     addressField.setAttribute('readonly', 'readonly');
 
-    var onAvatarFieldChange = function () {
+    var avatarFieldChangeHandler = function () {
       validateFiles(avatarField);
     };
 
-    var onImagesFieldChange = function () {
+    var imagesFieldChangeHandler = function () {
       validateFiles(imagesField);
     };
 
-    var onGuestsCountFieldChange = function () {
+    var guestsFieldChangeHandler = function () {
       validateGuestsAndRooms();
     };
 
-    var onRoomsCountFieldChange = function () {
+    var roomsCountFieldChangeHandler = function () {
       validateGuestsAndRooms();
     };
 
-    var onTitleFieldChange = function () {
+    var titleFieldChangeHandler = function () {
       validateTitle();
     };
 
-    var onPriceFieldChange = function () {
+    var priceFieldChangeHandler = function () {
       validatePricesAndTypes();
     };
 
-    var onTypeFieldChange = function () {
+    var typeFieldChangeHandler = function () {
       validatePricesAndTypes();
     };
 
-    var onTimeInChange = function () {
+    var timeInFieldChangeHandler = function () {
       validateTime();
     };
 
-    var onTimeOutChange = function () {
+    var timeOutFieldChangeHandler = function () {
       validateTime();
     };
 
-    var onSubmitForm = function () {
+    var formSubmitHandler = function (evt) {
       showFormErrors();
+      window.upload.send(new FormData(window.util.form), window.loadUtil.onSuccess, window.loadUtil.onError);
+      evt.preventDefault();
     };
 
-    guestsCountField.addEventListener('change', onGuestsCountFieldChange);
-    roomsCountField.addEventListener('change', onRoomsCountFieldChange);
-    titleField.addEventListener('change', onTitleFieldChange);
-    typeField.addEventListener('change', onTypeFieldChange);
-    priceField.addEventListener('change', onPriceFieldChange);
-    timeInField.addEventListener('change', onTimeInChange);
-    timeOutField.addEventListener('change', onTimeOutChange);
-    imagesField.addEventListener('change', onImagesFieldChange);
-    avatarField.addEventListener('change', onAvatarFieldChange);
-    window.util.form.addEventListener('submit', onSubmitForm);
+    guestsCountField.addEventListener('change', guestsFieldChangeHandler);
+    roomsCountField.addEventListener('change', roomsCountFieldChangeHandler);
+    titleField.addEventListener('change', titleFieldChangeHandler);
+    typeField.addEventListener('change', typeFieldChangeHandler);
+    priceField.addEventListener('change', priceFieldChangeHandler);
+    timeInField.addEventListener('change', timeInFieldChangeHandler);
+    timeOutField.addEventListener('change', timeOutFieldChangeHandler);
+    imagesField.addEventListener('change', imagesFieldChangeHandler);
+    avatarField.addEventListener('change', avatarFieldChangeHandler);
+    window.util.form.addEventListener('submit', formSubmitHandler);
+    reset.addEventListener('reset', btnResetHandler);
   };
 
   window.form = {
@@ -222,5 +230,4 @@
     address: addressField,
     addAddress: addAddress
   };
-
 })();
