@@ -11,7 +11,7 @@
   ];
 
   var ads = [];
-
+  var adsByHouseType = [];
   // возвращает массив с объявлениями
   var getAds = function (array) {
     for (var i = 0; i < array.length; i++) {
@@ -31,7 +31,19 @@
       if (xhr.readyState === window.loadUtil.READY_STATE) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
           getAds(xhr.response);
-          window.map.generate(ads, window.map.pins, window.pin.render, TOTAL_ADS);
+
+          var typeFieldChangeHandler = function () {
+            adsByHouseType = ads.filter(function (it) {
+              return it.offer.type === window.filter.check();
+
+            });
+
+            window.map.generate(adsByHouseType, window.map.pins, window.pin.render, adsByHouseType.length);
+          };
+
+
+          window.filter.typeField.addEventListener('change', typeFieldChangeHandler);
+
         } else {
           window.loadUtil.checkStatus(xhr.status);
         }
