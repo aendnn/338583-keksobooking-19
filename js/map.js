@@ -4,11 +4,12 @@
   var mapPins = window.util.map.querySelector('.map__pins');
 
   // возвращает клонированные объекты
-  var generateThings = function (array, area, render, quantity) {
+  var generateThings = function (array, area, render, quantity, maxAmount) {
+    var takeNumber = quantity > maxAmount ? maxAmount : quantity;
     var fragment = document.createDocumentFragment();
 
     if (Array.isArray(array)) {
-      for (var i = 0; i < quantity; i++) {
+      for (var i = 0; i < takeNumber; i++) {
         fragment.appendChild(render(array[i]));
       }
     } else {
@@ -16,6 +17,14 @@
     }
 
     area.appendChild(fragment);
+  };
+
+  var clearItems = function (items) {
+    if (items) {
+      for (var i = 0; i < items.length; i++) {
+        items[i].remove();
+      }
+    }
   };
 
   // просмотр карточки
@@ -81,6 +90,7 @@
   window.map = {
     pins: mapPins,
     viewCard: viewCard,
+    clear: clearItems,
     generate: generateThings
   };
 })();
