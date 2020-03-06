@@ -2,7 +2,7 @@
 
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
-  var TOTAL_ADS = 8;
+  var TOTAL_ADS = 5;
   var TYPE_OF_HOUSES = [
     'palace',
     'flat',
@@ -11,7 +11,6 @@
   ];
 
   var ads = [];
-  var adsByHouseType = [];
   // возвращает массив с объявлениями
   var getAds = function (array) {
     for (var i = 0; i < array.length; i++) {
@@ -31,18 +30,8 @@
       if (xhr.readyState === window.loadUtil.READY_STATE) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
           getAds(xhr.response);
-
-          var typeFieldChangeHandler = function () {
-            adsByHouseType = ads.filter(function (it) {
-              return it.offer.type === window.filter.check();
-
-            });
-
-            window.map.generate(adsByHouseType, window.map.pins, window.pin.render, adsByHouseType.length);
-          };
-
-
-          window.filter.typeField.addEventListener('change', typeFieldChangeHandler);
+          window.map.generate(ads, window.map.pins, window.pin.render, ads.length, TOTAL_ADS);
+          window.filter.byType();
 
         } else {
           window.loadUtil.checkStatus(xhr.status);
@@ -61,6 +50,7 @@
   window.data = {
     getAds: getAds,
     ads: ads,
+    TOTAL_ADS: TOTAL_ADS,
     load: load,
     TYPE_OF_HOUSES: TYPE_OF_HOUSES,
     URL: URL
