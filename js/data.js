@@ -3,12 +3,6 @@
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
   var TOTAL_ADS = 5;
-  var TYPE_OF_HOUSES = [
-    'palace',
-    'flat',
-    'house',
-    'bungalo'
-  ];
 
   var ads = [];
   // возвращает массив с объявлениями
@@ -30,8 +24,8 @@
       if (xhr.readyState === window.loadUtil.READY_STATE) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
           getAds(xhr.response);
-          window.map.generate(ads, window.map.pins, window.pin.render, ads.length, TOTAL_ADS);
-          window.filter.byType();
+          window.map.generate(ads, window.map.pins, window.pin.render, ads.length, window.data.TOTAL_ADS);
+          window.filter.allFields();
 
         } else {
           window.loadUtil.checkStatus(xhr.status);
@@ -52,7 +46,6 @@
     ads: ads,
     TOTAL_ADS: TOTAL_ADS,
     load: load,
-    TYPE_OF_HOUSES: TYPE_OF_HOUSES,
     URL: URL
   };
 })();
