@@ -23,9 +23,8 @@
     var xhrLoadHandler = function () {
       if (xhr.readyState === window.loadUtil.READY_STATE) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
-          getAds(xhr.response);
-          window.map.generate(ads, window.map.pins, window.pin.render, ads.length, window.data.TOTAL_ADS);
-          window.filter.allFields();
+          ads = getAds(xhr.response);
+          window.filter.allFields(ads);
 
         } else {
           window.loadUtil.checkStatus(xhr.status);
