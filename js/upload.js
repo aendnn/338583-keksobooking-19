@@ -7,14 +7,13 @@
   var upload = function (data, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = window.util.TIMEOUT_IN_MS;
+    xhr.timeout = window.loadUtil.TIMEOUT_IN_MS;
 
     var xhrLoadHandler = function () {
       if (xhr.readyState === window.loadUtil.READY_STATE) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
           onSuccess('Данные успешно отправлены');
-          window.util.form.reset();
-          window.form.changeFieldsetsState(window.form.fieldsets, true, true);
+          window.form.resetPage();
         } else {
           window.loadUtil.checkStatus(xhr.status);
         }

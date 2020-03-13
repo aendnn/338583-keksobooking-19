@@ -19,9 +19,17 @@
     }
   };
 
+  var closeDialogByDocumentClick = function (evt, area, dialog) {
+    var target = evt.target;
+    if (target !== area) {
+      dialog.remove();
+    }
+  };
+
   window.dialog = {
     closeByBtn: closeDialogByBtn,
     closeByEnter: closeDialogByEnter,
-    closeByEsc: closeDialogByEsc
+    closeByEsc: closeDialogByEsc,
+    closeByDocument: closeDialogByDocumentClick
   };
 })();

@@ -11,18 +11,20 @@
     SERVICE_UNAVAILABLE: 503
   };
 
+  var main = document.body.querySelector('main');
+
   var onError = function (message) {
-    var error;
     var errorTemplate = document.querySelector('#error').content;
     var errorMessage = errorTemplate.querySelector('.error__message');
 
     errorMessage.innerHTML = message;
-    errorTemplate.cloneNode(true);
 
-    document.body.appendChild(errorTemplate);
+    var errorElement = errorTemplate.cloneNode(true);
 
-    if (document.querySelector('.error')) {
-      error = document.querySelector('.error');
+    if (!document.querySelector('.error')) {
+      main.appendChild(errorElement);
+
+      var error = document.querySelector('.error');
 
       var btnCloseClickHandler = function () {
         window.dialog.closeByBtn(error);
@@ -35,32 +37,43 @@
       var documentKeydownHandler = function (evt) {
         window.dialog.closeByEsc(evt, error);
       };
+
+      var documentClickHandler = function (evt) {
+        window.dialog.closeByDocument(evt, errorMessage, error);
+      };
     }
 
     var errorClose = error.querySelector('.error__button');
     errorClose.addEventListener('click', btnCloseClickHandler);
     errorClose.addEventListener('keydown', btnCloseKeyDownHandler);
     document.addEventListener('keydown', documentKeydownHandler);
+    document.addEventListener('click', documentClickHandler);
   };
 
   var onSuccess = function (message) {
-    var success = document.querySelector('#success').content;
-    var successMessage = success.querySelector('.success__message');
+    var successTemplate = document.querySelector('#success').content;
+    var successMessage = successTemplate.querySelector('.success__message');
 
     successMessage.innerHTML = message;
-    success.cloneNode(true);
+    var successElement = successTemplate.cloneNode(true);
 
-    document.body.appendChild(success);
+    if (!main.querySelector('.success')) {
+      main.appendChild(successElement);
 
-    if (document.querySelector('.success')) {
-      success = document.querySelector('.success');
+      var success = main.querySelector('.success');
+      var successMessageArea = success.querySelector('.success__message');
 
       var documentKeydownHandler = function (evt) {
         window.dialog.closeByEsc(evt, success);
       };
-    }
 
-    document.addEventListener('keydown', documentKeydownHandler);
+      var documentClickHandler = function (evt) {
+        window.dialog.closeByDocument(evt, successMessageArea, success);
+      };
+
+      document.addEventListener('keydown', documentKeydownHandler);
+      document.addEventListener('click', documentClickHandler);
+    }
   };
 
   var xhrErrorHandler = function () {

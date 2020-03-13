@@ -1,95 +1,50 @@
 'use strict';
 
 (function () {
-  var left = window.pin.main.style.left.slice(0, -2);
-  var top = window.pin.main.style.top.slice(0, -2);
+  var pinMainSelector = document.querySelector('.map__pin--main');
 
-  // по клику на метку активируется страница
-  var pinMainSelectorMouseDownHandler = function (evt) {
+  var MainPin = {
+    ELEMENT: pinMainSelector,
+    WIDTH: pinMainSelector.offsetWidth,
+    HEIGHT: pinMainSelector.offsetHeight,
+    PIN_X_MAX: window.util.mapWidth,
+    PIN_Y_MIN: 130,
+    PIN_Y_MAX: 630,
+  };
+
+  var left = pinMainSelector.style.left.slice(0, -2);
+  var top = pinMainSelector.style.top.slice(0, -2);
+
+  var interacteOnMainPin = function (evt) {
     window.form.addAddress(true, left, top);
 
     if (window.util.map.classList.contains('map--faded')) {
-      if (evt.button === window.util.LEFT_MOUSE_KEYCODE) {
-        window.activation.active();
+      if (evt.button === window.util.LEFT_MOUSE_KEYCODE || evt.key === window.util.ENTER_KEY) {
+        window.page.active();
       }
     }
   };
 
   // по клику на enter активируется страница
   var pinMainSelectorKeyDownHandler = function (evt) {
-    window.form.addAddress(true, left, top);
-
-    if (window.util.map.classList.contains('map--faded')) {
-      if (evt.key === window.util.ENTER_KEY) {
-        window.activation.active();
-      }
-    }
+    interacteOnMainPin(evt);
   };
 
-  var drag = function () {
-    window.pin.main.addEventListener('mousedown', function (evt) {
-      evt.preventDefault();
-
-      var startCoords = {
-        x: evt.clientX,
-        y: evt.clientY
-      };
-
-      var documentMouseMoveHandler = function (moveEvt) {
-        moveEvt.preventDefault();
-
-        window.pin.main.removeEventListener('mousedown', pinMainSelectorMouseDownHandler);
-
-        var limits = {
-          top: window.pin.item.yMin,
-          right: window.util.mapWidth - window.pin.item.getPointer(window.pin.item.width),
-          bottom: window.pin.item.yMax,
-          left: 0
-        };
-
-        var shift = {
-          x: startCoords.x - moveEvt.clientX,
-          y: startCoords.y - moveEvt.clientY
-        };
-
-        var currentCoords = {
-          x: window.pin.main.offsetLeft - shift.x,
-          y: window.pin.main.offsetTop - shift.y
-        };
-
-        var getCoordinates = function (x, y) {
-          if (y <= limits.bottom && y >= limits.top) {
-            window.pin.main.style.top = (window.pin.main.offsetTop - shift.y) + 'px';
-          }
-
-          if (x <= limits.right && x >= limits.left) {
-            window.pin.main.style.left = (window.pin.main.offsetLeft - shift.x) + 'px';
-          }
-        };
-
-        startCoords = {
-          x: moveEvt.clientX,
-          y: moveEvt.clientY
-        };
-
-        getCoordinates(currentCoords.x, currentCoords.y);
-        window.form.addAddress(true, currentCoords.x, currentCoords.y);
-      };
-
-      var documentMouseUpHandler = function (upEvt) {
-        upEvt.preventDefault();
-
-        document.removeEventListener('mousemove', documentMouseMoveHandler);
-        document.removeEventListener('mouseup', documentMouseUpHandler);
-      };
-
-      document.addEventListener('mousemove', documentMouseMoveHandler);
-      document.addEventListener('mouseup', documentMouseUpHandler);
-    });
+  // по клику на метку активируется страница
+  var pinMainSelectorMouseDownHandler = function (evt) {
+    interacteOnMainPin(evt);
   };
 
-  window.pin.main.addEventListener('keydown', pinMainSelectorKeyDownHandler);
-  window.pin.main.addEventListener('mousedown', pinMainSelectorMouseDownHandler);
+  pinMainSelector.addEventListener('keydown', pinMainSelectorKeyDownHandler);
+  pinMainSelector.addEventListener('mousedown', pinMainSelectorMouseDownHandler);
 
-  drag();
+  window.mainPin = {
+    item: MainPin.ELEMENT,
+    width: MainPin.WIDTH,
+    height: MainPin.HEIGHT,
+    yMin: MainPin.PIN_Y_MIN,
+    yMax: MainPin.PIN_Y_MAX,
+    keyDown: pinMainSelectorKeyDownHandler,
+    mouseDown: pinMainSelectorMouseDownHandler
+  };
 })();
