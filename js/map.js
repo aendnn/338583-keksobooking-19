@@ -2,6 +2,8 @@
 
 (function () {
   var mapPins = window.util.map.querySelector('.map__pins');
+  var mapWidth = window.util.map.offsetWidth;
+  var mapHeight = window.util.map.offsetHeight;
 
   // возвращает клонированные объекты
   var generateThings = function (array, area, render, quantity, maxAmount) {
@@ -20,18 +22,15 @@
   };
 
   var clearItems = function (items) {
-    if (items) {
-      for (var i = 0; i < items.length; i++) {
-        items[i].remove();
-      }
-    }
+    items.forEach(function (item) {
+      item.remove();
+    });
   };
 
   // просмотр карточки
   var viewCard = function (left, top) {
     var i;
     var ad;
-    var card;
 
     var getCoordinates = function (element, index) {
       i = index;
@@ -44,44 +43,56 @@
       ad = window.data.ads[i];
     }
 
+    window.map.generate(ad, window.util.map, window.card.render, window.data.adsCount);
 
-    if (!document.querySelector('.map__card')) {
-      window.map.generate(ad, window.util.map, window.card.render, window.data.adsCount);
-      card = document.querySelector('.popup');
+    var card = document.querySelector('.popup');
+    var pinActive = document.querySelector('.map__pin--active');
+    var closeBtn = document.querySelector('.popup__close');
 
-      if (ad.offer.features.length === 0) {
-        card.querySelector('.popup__features').style.display = 'none';
-      }
+    card.classList.toggle('popup--active');
+    window.card.hide(ad);
 
-      var closeBtnClickHandler = function () {
-        window.dialog.closeByBtn(card);
-      };
+    var closeBtnClickHandler = function () {
+      window.dialog.closeByBtn(card);
+      pinActive.classList.remove('map__pin--active');
+    };
 
-      var closeBtnKeyDownHandler = function (evt) {
-        window.dialog.closeByBtn(evt, card);
-      };
+    var closeBtnKeyDownHandler = function (evt) {
+      window.dialog.closeByBtn(evt, card);
+      pinActive.classList.remove('map__pin--active');
+    };
 
-      var documentKeyDownHandler = function (evt) {
-        window.dialog.closeByEsc(evt, card);
-      };
+    var documentKeyDownHandler = function (evt) {
+      window.dialog.closeByEsc(evt, card);
+      pinActive.classList.remove('map__pin--active');
+    };
 
-
-      var closeBtn = document.querySelector('.popup__close');
-      closeBtn.addEventListener('click', closeBtnClickHandler);
-      closeBtn.addEventListener('keydown', closeBtnKeyDownHandler);
-      document.addEventListener('keydown', documentKeyDownHandler);
-    }
+    closeBtn.addEventListener('click', closeBtnClickHandler);
+    closeBtn.addEventListener('keydown', closeBtnKeyDownHandler);
+    document.addEventListener('keydown', documentKeyDownHandler);
   };
 
   // по клику на пин открывается соответствующая карточка
   var mapPinsClickHandler = function (evt) {
     var target = evt.target.parentElement;
 
-    if (target.matches('.js-pin')) {
-      var targetX = target.style.left.slice(0, -2);
-      var targetY = target.style.top.slice(0, -2);
+    if (document.querySelector('.popup--active')) {
+      var activePin = document.querySelector('.map__pin--active');
+      var activeCard = document.querySelector('.popup--active');
 
-      window.map.viewCard(targetX, targetY);
+      activePin.classList.remove('map__pin--active');
+      activeCard.remove();
+    }
+
+    if (target.matches('.js-pin')) {
+      if (!document.querySelector('.map__pin--active')) {
+        target.classList.toggle('map__pin--active');
+
+        var targetX = target.style.left.slice(0, -2);
+        var targetY = target.style.top.slice(0, -2);
+
+        window.map.viewCard(targetX, targetY);
+      }
     }
   };
 
@@ -89,6 +100,8 @@
 
   window.map = {
     pins: mapPins,
+    width: mapWidth,
+    height: mapHeight,
     viewCard: viewCard,
     clear: clearItems,
     generate: generateThings

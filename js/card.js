@@ -77,7 +77,34 @@
     return cardElement;
   };
 
+  var hideEmptyBlocks = function (item) {
+    for (var key in item) {
+      if (Object.prototype.hasOwnProperty.call(item, key)) {
+        var value = item[key];
+
+        if (value === 0 || value.length === 0 || value === '') {
+          var className = '.popup__' + key;
+
+          if (key === 'rooms' || key === 'guests') {
+            className = '.popup__text--capacity';
+          }
+
+          if (document.querySelector(className)) {
+            document.querySelector(className).remove();
+          }
+        }
+
+        if (typeof value === 'object') {
+          hideEmptyBlocks(value);
+        }
+      }
+    }
+  };
+
+
   window.card = {
     render: renderCard,
+    hide: hideEmptyBlocks,
+    createElement: createElement
   };
 })();

@@ -758,8 +758,6 @@ fieldset {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
 }
 
 .ad-form__upload {
@@ -807,14 +805,23 @@ fieldset {
 }
 
 .ad-form__photo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   margin-right: 10px;
   margin-bottom: 10px;
 
-  width: 70px;
+  min-width: 70px;
   height: 70px;
 
   background-color: #e4e4de;
   border-radius: 5px;
+}
+
+.ad-form__img {
+  display: block;
+  width: 70px;
+  height: 70px;
 }
 
 .ad-form__element--submit {
