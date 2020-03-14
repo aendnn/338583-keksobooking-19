@@ -118,7 +118,6 @@
     }
   };
 
-
   // закрытие карточки
   var closeCard = function () {
     var closeBtn = document.querySelector('.popup__close');
