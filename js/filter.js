@@ -9,6 +9,7 @@
   var guestsField = filterForm.querySelector('#housing-guests');
   var featuresFieldset = filterForm.querySelector('#housing-features');
 
+  // проверяет значение поля цены
   var checkPrices = function (value, element) {
     var PRICES = [
       'low',
@@ -31,6 +32,8 @@
     }
   };
 
+  // возвращают объявления по заданному фильтру
+
   var filterByType = function (data) {
     return typeField.value === 'any' ||
       typeField.value === data.offer.type;
@@ -43,12 +46,12 @@
 
   var filterByRooms = function (data) {
     return roomsField.value === 'any' ||
-      roomsField.value === data.offer.rooms;
+      roomsField.value === data.offer.rooms.toString();
   };
 
   var filterByGuests = function (data) {
     return guestsField.value === 'any' ||
-      guestsField.value === data.offer.guests;
+      guestsField.value === data.offer.guests.toString();
   };
 
   var filterByFeatures = function (data) {
@@ -74,24 +77,31 @@
       var filteredAdverts = window.data.ads.filter(filterAdverts);
       window.map.generate(filteredAdverts, window.map.pins, window.pin.render, filteredAdverts.length, window.data.adsCount);
       window.map.clear(pins);
-
-      if (document.querySelector('.popup--active')) {
-        var card = document.querySelector('.popup--active');
-        card.remove();
-      }
+      window.card.remove();
     });
   };
 
-  typeField.addEventListener('change', fieldsChangeHandler);
-  priceField.addEventListener('change', fieldsChangeHandler);
-  roomsField.addEventListener('change', fieldsChangeHandler);
-  guestsField.addEventListener('change', fieldsChangeHandler);
-  featuresFieldset.addEventListener('change', fieldsChangeHandler);
+  var addInteracteWithFilters = function () {
+    typeField.addEventListener('change', fieldsChangeHandler);
+    priceField.addEventListener('change', fieldsChangeHandler);
+    roomsField.addEventListener('change', fieldsChangeHandler);
+    guestsField.addEventListener('change', fieldsChangeHandler);
+    featuresFieldset.addEventListener('change', fieldsChangeHandler);
+  };
 
+  var RemoveinteracteWithFilters = function () {
+    typeField.removeEventListener('change', fieldsChangeHandler);
+    priceField.removeEventListener('change', fieldsChangeHandler);
+    roomsField.removeEventListener('change', fieldsChangeHandler);
+    guestsField.removeEventListener('change', fieldsChangeHandler);
+    featuresFieldset.removeEventListener('change', fieldsChangeHandler);
+  };
 
   window.filter = {
     form: filterForm,
     fields: filterFields,
-    ads: filterAdverts
+    ads: filterAdverts,
+    onInteracte: addInteracteWithFilters,
+    offInteracte: RemoveinteracteWithFilters
   };
 })();

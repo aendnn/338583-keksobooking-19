@@ -1,42 +1,47 @@
 'use strict';
 
 (function () {
-  var pinMainSelector = document.querySelector('.map__pin--main');
+  var pinMain = document.querySelector('.map__pin--main');
 
   var MainPin = {
-    ELEMENT: pinMainSelector,
-    WIDTH: pinMainSelector.offsetWidth,
-    HEIGHT: pinMainSelector.offsetHeight,
+    ELEMENT: pinMain,
+    WIDTH: pinMain.offsetWidth,
+    HEIGHT: pinMain.offsetHeight,
     PIN_X_MAX: window.util.mapWidth,
     PIN_Y_MIN: 130,
     PIN_Y_MAX: 630,
   };
 
-  var left = pinMainSelector.style.left.slice(0, -2);
-  var top = pinMainSelector.style.top.slice(0, -2);
+  var left = pinMain.style.left.slice(0, -2);
+  var top = pinMain.style.top.slice(0, -2);
 
-  var interacteOnMainPin = function (evt) {
+  var addinteracteOnMainPin = function () {
     window.form.addAddress(true, left, top);
 
-    if (window.util.map.classList.contains('map--faded')) {
-      if (evt.button === window.util.LEFT_MOUSE_KEYCODE || evt.key === window.util.ENTER_KEY) {
-        window.page.active();
-      }
+    if (!window.util.map.classList.contains('map--faded')) {
+      pinMain.removeEventListener('keydown', pinMainKeyDownHandler);
+      pinMain.removeEventListener('mousedown', pinMainMouseDownHandler);
     }
   };
 
   // по клику на enter активируется страница
-  var pinMainSelectorKeyDownHandler = function (evt) {
-    interacteOnMainPin(evt);
+  var pinMainKeyDownHandler = function (evt) {
+    if (evt.key === window.util.enter) {
+      window.page.active();
+      addinteracteOnMainPin();
+    }
   };
 
   // по клику на метку активируется страница
-  var pinMainSelectorMouseDownHandler = function (evt) {
-    interacteOnMainPin(evt);
+  var pinMainMouseDownHandler = function (evt) {
+    if (evt.button === window.util.leftMouseBtn) {
+      window.page.active();
+      addinteracteOnMainPin();
+    }
   };
 
-  pinMainSelector.addEventListener('keydown', pinMainSelectorKeyDownHandler);
-  pinMainSelector.addEventListener('mousedown', pinMainSelectorMouseDownHandler);
+  pinMain.addEventListener('keydown', pinMainKeyDownHandler);
+  pinMain.addEventListener('mousedown', pinMainMouseDownHandler);
 
   window.mainPin = {
     item: MainPin.ELEMENT,
@@ -44,7 +49,7 @@
     height: MainPin.HEIGHT,
     yMin: MainPin.PIN_Y_MIN,
     yMax: MainPin.PIN_Y_MAX,
-    keyDown: pinMainSelectorKeyDownHandler,
-    mouseDown: pinMainSelectorMouseDownHandler
+    keyDown: pinMainKeyDownHandler,
+    mouseDown: pinMainMouseDownHandler
   };
 })();

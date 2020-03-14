@@ -3,6 +3,7 @@
 (function () {
   var READY_STATE = 4;
   var TIMEOUT_IN_MS = 10000;
+
   var StatusCode = {
     OK: 200,
     NOT_FOUND: 404,
@@ -13,104 +14,119 @@
 
   var main = document.body.querySelector('main');
 
-  var onError = function (message) {
+  // проверяет статус ответа
+  var checkStatus = function (status) {
+    switch (status) {
+      case StatusCode.NOT_FOUND:
+        errorShowHandler(StatusCode.NOT_FOUND + 'Ничего не найдено');
+        break;
+
+      case StatusCode.BAD_REQUEST:
+        errorShowHandler(StatusCode.BAD_REQUEST + 'Упс, с вашим запросом что-то не так :(');
+        break;
+
+      case StatusCode.SERVICE_UNAVAILABLE:
+        errorShowHandler(StatusCode.SERVICE_UNAVAILABLE + 'Сервер временно не отвечает');
+        break;
+
+      case StatusCode.INTERNAL_SERVER_ERROR:
+        errorShowHandler(StatusCode.INTERNAL_SERVER_ERROR + 'Внутренняя ошибка сервера');
+        break;
+    }
+  };
+
+  // закрывает модальное окно
+  var closeModal = function (modal, area, btn) {
+    var remove = function () {
+      modal.remove();
+      document.removeEventListener('keydown', documentKeydownHandler);
+      document.removeEventListener('click', documentClickHandler);
+    };
+
+    var btnCloseClickHandler = function () {
+      remove();
+    };
+
+    var btnCloseKeyDownHandler = function (evt) {
+      if (evt.key === window.util.enter) {
+        remove();
+      }
+    };
+
+    var documentKeydownHandler = function (evt) {
+      if (evt.key === window.util.esc) {
+        remove();
+      }
+    };
+
+    var documentClickHandler = function (evt) {
+      var target = evt.target;
+
+      if (target !== area) {
+        remove();
+      }
+    };
+
+    if (btn) {
+      btn.addEventListener('click', btnCloseClickHandler);
+      btn.addEventListener('keydown', btnCloseKeyDownHandler);
+    }
+
+    document.addEventListener('keydown', documentKeydownHandler);
+    document.addEventListener('click', documentClickHandler);
+  };
+
+  // функция-коллбэк ошибки
+  var errorShowHandler = function (message) {
     var errorTemplate = document.querySelector('#error').content;
     var errorMessage = errorTemplate.querySelector('.error__message');
 
-    errorMessage.innerHTML = message;
+    errorMessage.textContent = message;
 
     var errorElement = errorTemplate.cloneNode(true);
 
     if (!document.querySelector('.error')) {
       main.appendChild(errorElement);
-
-      var error = document.querySelector('.error');
-
-      var btnCloseClickHandler = function () {
-        window.dialog.closeByBtn(error);
-      };
-
-      var btnCloseKeyDownHandler = function (evt) {
-        window.dialog.closeByEnter(evt, error);
-      };
-
-      var documentKeydownHandler = function (evt) {
-        window.dialog.closeByEsc(evt, error);
-      };
-
-      var documentClickHandler = function (evt) {
-        window.dialog.closeByDocument(evt, errorMessage, error);
-      };
     }
 
+    var error = document.querySelector('.error');
     var errorClose = error.querySelector('.error__button');
-    errorClose.addEventListener('click', btnCloseClickHandler);
-    errorClose.addEventListener('keydown', btnCloseKeyDownHandler);
-    document.addEventListener('keydown', documentKeydownHandler);
-    document.addEventListener('click', documentClickHandler);
+
+    closeModal(error, errorMessage, errorClose);
   };
 
-  var onSuccess = function (message) {
+  // функция-коллбэк успеха
+  var successShowHandler = function (message) {
     var successTemplate = document.querySelector('#success').content;
     var successMessage = successTemplate.querySelector('.success__message');
 
-    successMessage.innerHTML = message;
+    successMessage.textContent = message;
     var successElement = successTemplate.cloneNode(true);
 
     if (!main.querySelector('.success')) {
       main.appendChild(successElement);
 
       var success = main.querySelector('.success');
-      var successMessageArea = success.querySelector('.success__message');
 
-      var documentKeydownHandler = function (evt) {
-        window.dialog.closeByEsc(evt, success);
-      };
-
-      var documentClickHandler = function (evt) {
-        window.dialog.closeByDocument(evt, successMessageArea, success);
-      };
-
-      document.addEventListener('keydown', documentKeydownHandler);
-      document.addEventListener('click', documentClickHandler);
+      closeModal(success, successMessage);
     }
   };
 
   var xhrErrorHandler = function () {
-    onError('Ошибка соединения');
+    errorShowHandler('Ошибка соединения');
   };
 
   var xhrTimeoutHandler = function () {
-    onError('Запрос не успел выполниться за ' + TIMEOUT_IN_MS + ' мс');
-  };
-
-  var checkStatus = function (status) {
-    switch (status) {
-      case StatusCode.NOT_FOUND:
-        onError(StatusCode.NOT_FOUND + '<br>Ничего не найдено');
-        break;
-
-      case StatusCode.BAD_REQUEST:
-        onError(StatusCode.BAD_REQUEST + '<br>Упс, с вашим запросом что-то не так :(');
-        break;
-
-      case StatusCode.SERVICE_UNAVAILABLE:
-        onError(StatusCode.SERVICE_UNAVAILABLE + '<br>Сервер временно не отвечает');
-        break;
-
-      case StatusCode.INTERNAL_SERVER_ERROR:
-        onError(StatusCode.INTERNAL_SERVER_ERROR + '<br>Внутренняя ошибка сервера');
-        break;
-    }
+    errorShowHandler('Запрос не успел выполниться за ' + TIMEOUT_IN_MS + ' мс');
   };
 
   window.loadUtil = {
-    TIMEOUT_IN_MS: TIMEOUT_IN_MS,
-    READY_STATE: READY_STATE,
+    timeout: TIMEOUT_IN_MS,
+    readyState: READY_STATE,
     statusCode: StatusCode,
     checkStatus: checkStatus,
-    onError: onError,
-    onSuccess: onSuccess,
+    onError: errorShowHandler,
+    onSuccess: successShowHandler,
     xhrError: xhrErrorHandler,
     xhrTimeout: xhrTimeoutHandler
   };
