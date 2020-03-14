@@ -29,10 +29,10 @@
   var load = function (url, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = window.loadUtil.TIMEOUT_IN_MS;
+    xhr.timeout = window.loadUtil.timeout;
 
     var xhrLoadHandler = function () {
-      if (xhr.readyState === window.loadUtil.READY_STATE) {
+      if (xhr.readyState === window.loadUtil.readyState) {
         if (xhr.status === window.loadUtil.statusCode.OK) {
           ads = getAds(xhr.response);
           window.form.changeState(window.filter.fields, true);

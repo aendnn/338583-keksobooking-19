@@ -1,10 +1,10 @@
 'use strict';
 
 (function () {
-  var pinSelector = window.util.map.querySelector('.map__pin');
-  var pinCharacteristic = {
-    WIDTH: pinSelector.offsetWidth,
-    HEIGHT: pinSelector.offsetHeight,
+  var pin = window.util.map.querySelector('.map__pin');
+  var PinCharacteristic = {
+    WIDTH: pin.offsetWidth,
+    HEIGHT: pin.offsetHeight,
     getPointer: function (width) {
       var center = width / 2;
       return center;
@@ -26,10 +26,10 @@
   };
 
   window.pin = {
-    item: pinCharacteristic,
-    width: pinCharacteristic.WIDTH,
-    height: pinCharacteristic.HEIGHT,
-    getCenter: pinCharacteristic.getPointer,
+    item: PinCharacteristic,
+    width: PinCharacteristic.WIDTH,
+    height: PinCharacteristic.HEIGHT,
+    getCenter: PinCharacteristic.getPointer,
     render: renderPin
   };
 

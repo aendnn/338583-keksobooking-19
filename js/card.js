@@ -1,7 +1,9 @@
 'use strict';
 
-
 (function () {
+  var PHOTO_WIDTH = 45;
+  var PHOTO_HEIGHT = 40;
+
   var cardTemplate = document.querySelector('#card').content;
 
   var HousesNames = {
@@ -11,20 +13,12 @@
     BUNGALO: 'Бунгало'
   };
 
-  // создает DOM-элементы
-  var createElement = function (tagName, className) {
-    var element = document.createElement(tagName);
-    element.classList.add(className);
-
-    return element;
-  };
-
   // создает изображение
   var renderPhoto = function (photo) {
-    var photoItem = createElement('img', 'popup__photo');
+    var photoItem = window.util.createTag('img', 'popup__photo');
     photoItem.src = photo;
-    photoItem.width = 45;
-    photoItem.height = 40;
+    photoItem.width = PHOTO_WIDTH;
+    photoItem.height = PHOTO_HEIGHT;
 
     return photoItem;
   };
@@ -33,9 +27,9 @@
   var getPhotos = function (array) {
     var photosFragment = document.createDocumentFragment();
 
-    for (var i = 0; i < array.length; i++) {
-      photosFragment.appendChild(renderPhoto(array[i]));
-    }
+    array.forEach(function (photo) {
+      photosFragment.appendChild(renderPhoto(photo));
+    });
 
     return photosFragment;
   };
@@ -46,12 +40,13 @@
     var featureSpecialClass = '';
     var featuresItem;
 
-    for (var i = 0; i < array.length; i++) {
-      featuresItem = createElement('li', 'popup__feature');
-      featureSpecialClass = 'popup__feature--' + array[i];
+    array.forEach(function (feature) {
+      featuresItem = window.util.createTag('li', 'popup__feature');
+      featureSpecialClass = 'popup__feature--' + feature;
       featuresItem.classList.add(featureSpecialClass);
       featuresFragment.appendChild(featuresItem);
-    }
+    });
+
     return featuresFragment;
   };
 
@@ -77,6 +72,7 @@
     return cardElement;
   };
 
+  // удаляет пустые блоки
   var hideEmptyBlocks = function (item) {
     for (var key in item) {
       if (Object.prototype.hasOwnProperty.call(item, key)) {
@@ -101,10 +97,53 @@
     }
   };
 
+  // удаляет карточку
+  var remove = function () {
+    if (document.querySelector('.popup')) {
+      var card = document.querySelector('.popup');
+      var pinActive = document.querySelector('.map__pin--active');
+
+      if (pinActive) {
+        pinActive.classList.remove('map__pin--active');
+      }
+
+      card.remove();
+      document.removeEventListener('keydown', documentKeyDownHandler);
+    }
+  };
+
+  var documentKeyDownHandler = function (e) {
+    if (e.key === window.util.esc) {
+      window.card.remove();
+    }
+  };
+
+
+  // закрытие карточки
+  var closeCard = function () {
+    var closeBtn = document.querySelector('.popup__close');
+
+    var closeBtnClickHandler = function () {
+      remove();
+      document.removeEventListener('keydown', documentKeyDownHandler);
+    };
+
+    var closeBtnKeyDownHandler = function (evt) {
+      if (evt.key === window.util.enter) {
+        remove();
+        document.removeEventListener('keydown', documentKeyDownHandler);
+      }
+    };
+
+    document.addEventListener('keydown', documentKeyDownHandler);
+    closeBtn.addEventListener('click', closeBtnClickHandler);
+    closeBtn.addEventListener('keydown', closeBtnKeyDownHandler);
+  };
 
   window.card = {
     render: renderCard,
-    hide: hideEmptyBlocks,
-    createElement: createElement
+    hideBlocks: hideEmptyBlocks,
+    close: closeCard,
+    remove: remove
   };
 })();

@@ -4,11 +4,11 @@
   // активация страницы
   var activePage = function () {
     window.util.map.classList.remove('map--faded');
-    window.util.form.classList.remove('ad-form--disabled');
     window.data.load(window.data.URL, window.loadUtil.onError);
-    window.form.changeState(window.form.fieldsets, true);
-    window.form.addAddress(true);
+    window.form.active();
     window.form.validate();
+    window.map.onInteracte();
+    window.filter.onInteracte();
   };
 
   // деактивация страницы
@@ -20,10 +20,25 @@
     window.form.addAddress(false);
   };
 
+  // сбрасывает страницу в неактивное состояние
+  var resetPage = function () {
+    var pins = document.querySelectorAll('.js-pin');
+    window.util.form.reset();
+    window.form.noValidate();
+    window.filter.form.reset();
+    window.filter.offInteracte();
+    window.map.clear(pins);
+    window.card.remove();
+    window.page.deactivate();
+    window.mainPin.item.addEventListener('mousedown', window.mainPin.mouseDown);
+    window.mainPin.item.addEventListener('keydown', window.mainPin.keyDown);
+  };
+
   deactivatePage();
 
   window.page = {
     active: activePage,
-    deactivate: deactivatePage
+    deactivate: deactivatePage,
+    reset: resetPage
   };
 })();
