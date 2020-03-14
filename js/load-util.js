@@ -16,23 +16,27 @@
 
   // проверяет статус ответа
   var checkStatus = function (status) {
+    var message;
+
     switch (status) {
       case StatusCode.NOT_FOUND:
-        errorShowHandler(StatusCode.NOT_FOUND + 'Ничего не найдено');
+        message = 'Ничего не найдено';
         break;
 
       case StatusCode.BAD_REQUEST:
-        errorShowHandler(StatusCode.BAD_REQUEST + 'Упс, с вашим запросом что-то не так :(');
+        message = 'Упс, с вашим запросом что-то не так :(';
         break;
 
       case StatusCode.SERVICE_UNAVAILABLE:
-        errorShowHandler(StatusCode.SERVICE_UNAVAILABLE + 'Сервер временно не отвечает');
+        message = 'Сервер временно не отвечает';
         break;
 
       case StatusCode.INTERNAL_SERVER_ERROR:
-        errorShowHandler(StatusCode.INTERNAL_SERVER_ERROR + 'Внутренняя ошибка сервера');
+        message = 'Внутренняя ошибка сервера';
         break;
     }
+
+    return message;
   };
 
   // закрывает модальное окно

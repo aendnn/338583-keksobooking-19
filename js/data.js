@@ -25,7 +25,6 @@
   };
 
   // загрузка данных с сервера
-  // eslint-disable-next-line no-unused-vars
   var load = function (url, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -39,7 +38,7 @@
           ads = window.data.ads.filter(window.filter.ads);
           window.map.generate(ads, window.map.pins, window.pin.render, ads.length, window.data.adsCount);
         } else {
-          window.loadUtil.checkStatus(xhr.status);
+          onError(window.loadUtil.checkStatus(xhr.status));
         }
       }
     };

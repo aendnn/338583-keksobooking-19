@@ -4,7 +4,6 @@
   var URL = 'https://js.dump.academy/keksobooking';
 
   // загружает объявление
-  // eslint-disable-next-line no-unused-vars
   var upload = function (data, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -16,7 +15,7 @@
           onSuccess('Данные успешно отправлены');
           window.page.reset();
         } else {
-          window.loadUtil.checkStatus(xhr.status);
+          onError(window.loadUtil.checkStatus(xhr.status));
         }
       }
     };
