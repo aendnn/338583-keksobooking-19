@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var EXCLUDING_NUMBER = 1;
-
   var ENTER_KEY = 'Enter';
   var ESC_KEY = 'Escape';
   var LEFT_MOUSE_KEYCODE = 0;
@@ -21,7 +19,6 @@
   window.util = {
     map: map,
     form: form,
-    excluding: EXCLUDING_NUMBER,
     enter: ENTER_KEY,
     esc: ESC_KEY,
     leftMouseBtn: LEFT_MOUSE_KEYCODE,

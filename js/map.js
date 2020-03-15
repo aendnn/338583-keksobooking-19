@@ -7,18 +7,23 @@
   var mapPins = window.util.map.querySelector('.map__pins');
   var mapWidth = window.util.map.offsetWidth;
   var mapHeight = window.util.map.offsetHeight;
+  var pinActive;
+
+  var generateCard = function (element, area, render) {
+    var fragment = document.createDocumentFragment();
+
+    fragment.appendChild(render(element));
+
+    area.appendChild(fragment);
+  };
 
   // возвращает клонированные объекты
-  var generateThings = function (array, area, render, quantity, maxAmount) {
+  var generatePins = function (array, area, render, quantity, maxAmount) {
     var takeNumber = quantity > maxAmount ? maxAmount : quantity;
     var fragment = document.createDocumentFragment();
 
-    if (Array.isArray(array)) {
-      for (var i = 0; i < takeNumber; i++) {
-        fragment.appendChild(render(array[i]));
-      }
-    } else {
-      fragment.appendChild(render(array));
+    for (var i = 0; i < takeNumber; i++) {
+      fragment.appendChild(render(array[i]));
     }
 
     area.appendChild(fragment);
@@ -47,14 +52,14 @@
       ad = window.data.ads[i];
     }
 
-    generateThings(ad, window.util.map, window.card.render, window.data.adsCount);
+    generateCard(ad, window.util.map, window.card.render);
     window.card.hideBlocks(ad);
     window.card.close();
   };
 
   // активирует пин
   var activePin = function (evtTarget) {
-    if (!document.querySelector('.map__pin--active')) {
+    if (!pinActive) {
       evtTarget.classList.toggle('map__pin--active');
 
       var targetX = evtTarget.style.left.slice(COORDINATES_START_INDEX, COORDINATES_PX_INDEX);
@@ -69,9 +74,8 @@
     var mapPinsClickHandler = function (evt) {
       var target = evt.target.parentElement;
 
-      window.card.remove();
-
-      if (target.matches('.js-pin')) {
+      if (target.classList.contains('js-pin')) {
+        window.card.remove();
         activePin(target);
       }
     };
@@ -79,12 +83,9 @@
     var mapPinsKeyDownHandler = function (evt) {
       var target = evt.target;
 
-      window.card.remove();
-
-      if (target.matches('.js-pin') && evt.key === window.util.enter) {
+      if (target.classList.contains('js-pin') && evt.key === window.util.enter) {
+        window.card.remove();
         activePin(target);
-
-        mapPins.removeEventListener('click', mapPinsClickHandler);
       }
     };
 
@@ -96,9 +97,10 @@
     pins: mapPins,
     width: mapWidth,
     height: mapHeight,
+    activePin: pinActive,
     viewCard: viewCard,
     clear: clearItems,
-    generate: generateThings,
+    generate: generatePins,
     onInteracte: addInteracteWithPins
   };
 })();

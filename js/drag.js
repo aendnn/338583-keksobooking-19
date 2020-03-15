@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var PIN_Y_MIN = 130;
+  var PIN_Y_MAX = 630;
+
   var drag = function () {
     window.mainPin.item.addEventListener('mousedown', function (evt) {
       evt.preventDefault();
@@ -17,9 +20,9 @@
         window.mainPin.item.removeEventListener('keydown', window.mainPin.keyDown);
 
         var limits = {
-          top: window.mainPin.yMin,
+          top: PIN_Y_MIN,
           right: window.map.width - window.pin.getCenter(window.pin.width),
-          bottom: window.mainPin.yMax,
+          bottom: PIN_Y_MAX,
           left: -window.pin.getCenter(window.pin.width)
         };
 

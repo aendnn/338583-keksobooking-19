@@ -44,8 +44,8 @@
     };
 
     xhr.addEventListener('load', xhrLoadHandler);
-    xhr.addEventListener('error', window.loadUtil.xhrErrorHandler);
-    xhr.addEventListener('timeout', window.loadUtil.xhrTimeoutHandler);
+    xhr.addEventListener('error', window.loadUtil.xhrError);
+    xhr.addEventListener('timeout', window.loadUtil.xhrTimeout);
 
     xhr.open('GET', url);
     xhr.send();

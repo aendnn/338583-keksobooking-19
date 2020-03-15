@@ -3,14 +3,8 @@
 (function () {
   var pinMain = document.querySelector('.map__pin--main');
 
-  var MainPin = {
-    ELEMENT: pinMain,
-    WIDTH: pinMain.offsetWidth,
-    HEIGHT: pinMain.offsetHeight,
-    PIN_X_MAX: window.util.mapWidth,
-    PIN_Y_MIN: 130,
-    PIN_Y_MAX: 630,
-  };
+  var width = pinMain.offsetWidth;
+  var height = pinMain.offsetHeight;
 
   var left = pinMain.style.left.slice(0, -2);
   var top = pinMain.style.top.slice(0, -2);
@@ -40,15 +34,21 @@
     }
   };
 
+  var reset = function () {
+    pinMain.style.top = '375px';
+    pinMain.style.left = '570px';
+    pinMain.addEventListener('mousedown', window.mainPin.mouseDown);
+    pinMain.addEventListener('keydown', window.mainPin.keyDown);
+  };
+
   pinMain.addEventListener('keydown', pinMainKeyDownHandler);
   pinMain.addEventListener('mousedown', pinMainMouseDownHandler);
 
   window.mainPin = {
-    item: MainPin.ELEMENT,
-    width: MainPin.WIDTH,
-    height: MainPin.HEIGHT,
-    yMin: MainPin.PIN_Y_MIN,
-    yMax: MainPin.PIN_Y_MAX,
+    item: pinMain,
+    width: width,
+    height: height,
+    reset: reset,
     keyDown: pinMainKeyDownHandler,
     mouseDown: pinMainMouseDownHandler
   };

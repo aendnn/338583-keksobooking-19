@@ -90,14 +90,11 @@
 
   // валидация полей гостей и комнат
   var guestsAndRoomsFieldsChangeHandler = function () {
-    roomsCountField.setCustomValidity('Введите корректное значение');
     guestsCountField.setCustomValidity('Слишком много гостей');
 
     if (roomsCountField.value === guestsCountField.value) {
-      roomsCountField.setCustomValidity('');
       guestsCountField.setCustomValidity('');
     } else if ((roomsCountField.value !== '100') && (roomsCountField.value > guestsCountField.value) && (guestsCountField.value !== '100')) {
-      roomsCountField.setCustomValidity('');
       guestsCountField.setCustomValidity('');
     }
 
@@ -133,6 +130,32 @@
     }
   };
 
+  var resetFields = function () {
+    var clearAvatar = function (preview) {
+      preview.src = 'img/muffin-grey.svg';
+    };
+
+    var clearPhotos = function () {
+      var photos = document.querySelectorAll('.ad-form__img');
+
+      window.map.clear(photos);
+    };
+
+    var clearPriceMin = function () {
+      priceField.min = 5000;
+      priceField.placeholder = 5000;
+    };
+
+    fields.forEach(function (field) {
+      field.style.borderColor = '#d9d9d3';
+    });
+
+    window.util.form.reset();
+    clearAvatar(avatarPreview);
+    clearPhotos();
+    clearPriceMin();
+  };
+
   var imagesFieldChangeHandler = function () {
     validateFile(imagesField, imagesPreview);
   };
@@ -154,34 +177,47 @@
   var priceAndTypeFieldsChangeHandler = function () {
     var numberPrice = parseInt(priceField.value, RADIX);
 
+    var checkType = function (value) {
+      var price;
+
+      switch (value) {
+        case 'bungalo':
+          price = HousesPrice.BUNGALO;
+          break;
+
+        case 'flat':
+          price = HousesPrice.FLAT;
+          break;
+
+        case 'house':
+          price = HousesPrice.HOUSE;
+          break;
+
+        case 'palace':
+          price = HousesPrice.PALACE;
+          break;
+      }
+
+      return price;
+    };
+
     // изменяет значение плейсхолдера в зависимости от типа жилья
-    var changePlaceholder = function () {
+    var changeMinPrice = function () {
       window.data.houseTypes.forEach(function (type) {
         if (typeField.value === type) {
           priceField.placeholder = HousesPrice[type.toUpperCase()];
+          priceField.min = HousesPrice[type.toUpperCase()];
         }
       });
     };
 
     priceField.setCustomValidity('Введите корректную стоимость');
-    typeField.setCustomValidity('Выберите подходящее жилье');
 
-    changePlaceholder();
-
-    if (priceField.type === 'number' && typeField.value === 'bungalo' && numberPrice >= HousesPrice[typeField.value.toUpperCase()] && numberPrice <= MAX_PRICE) {
-      typeField.setCustomValidity('');
-      priceField.setCustomValidity('');
-    } else if (priceField.type === 'number' && typeField.value === 'flat' && numberPrice >= HousesPrice[typeField.value.toUpperCase()] && numberPrice <= MAX_PRICE) {
-      typeField.setCustomValidity('');
-      priceField.setCustomValidity('');
-    } else if (priceField.type === 'number' && typeField.value === 'house' && numberPrice >= HousesPrice[typeField.value.toUpperCase()] && numberPrice <= MAX_PRICE) {
-      typeField.setCustomValidity('');
-      priceField.setCustomValidity('');
-    } else if (priceField.type === 'number' && typeField.value === 'palace' && numberPrice >= HousesPrice[typeField.value.toUpperCase()] && numberPrice <= MAX_PRICE) {
-      typeField.setCustomValidity('');
+    if (priceField.type === 'number' && numberPrice >= checkType(typeField.value) && numberPrice <= MAX_PRICE) {
       priceField.setCustomValidity('');
     }
 
+    changeMinPrice();
     checkInvalidField(priceField);
     checkInvalidField(typeField);
   };
@@ -232,6 +268,7 @@
     address: addressField,
     addAddress: addAddress,
     active: activeForm,
-    noValidate: removeValidate
+    noValidate: removeValidate,
+    resetFields: resetFields
   };
 })();

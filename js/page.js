@@ -4,7 +4,7 @@
   // активация страницы
   var activePage = function () {
     window.util.map.classList.remove('map--faded');
-    window.data.load(window.data.URL, window.loadUtil.onError);
+    setTimeout('window.data.load(window.data.URL, window.loadUtil.onError)', 1000);
     window.form.active();
     window.form.validate();
     window.map.onInteracte();
@@ -23,15 +23,14 @@
   // сбрасывает страницу в неактивное состояние
   var resetPage = function () {
     var pins = document.querySelectorAll('.js-pin');
-    window.util.form.reset();
     window.form.noValidate();
+    window.form.resetFields();
     window.filter.form.reset();
     window.filter.offInteracte();
     window.map.clear(pins);
     window.card.remove();
     window.page.deactivate();
-    window.mainPin.item.addEventListener('mousedown', window.mainPin.mouseDown);
-    window.mainPin.item.addEventListener('keydown', window.mainPin.keyDown);
+    window.mainPin.reset();
   };
 
   deactivatePage();

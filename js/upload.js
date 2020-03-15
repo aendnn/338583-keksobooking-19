@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var URL = 'https://js.dump.academy/keksobooking';
+  var URL = 'https://js.dump.academy/keksoboodking';
 
   // загружает объявление
   var upload = function (data, onSuccess, onError) {
@@ -21,8 +21,8 @@
     };
 
     xhr.addEventListener('load', xhrLoadHandler);
-    xhr.addEventListener('error', window.loadUtil.xhrErrorHandler);
-    xhr.addEventListener('timeout', window.loadUtil.xhrTimeoutHandler);
+    xhr.addEventListener('error', window.loadUtil.xhrError);
+    xhr.addEventListener('timeout', window.loadUtil.xhrTimeout);
 
     xhr.open('POST', URL);
     xhr.send(data);

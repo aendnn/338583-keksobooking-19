@@ -101,11 +101,9 @@
   var remove = function () {
     if (document.querySelector('.popup')) {
       var card = document.querySelector('.popup');
-      var pinActive = document.querySelector('.map__pin--active');
+      var activePin = document.querySelector('.map__pin--active');
 
-      if (pinActive) {
-        pinActive.classList.remove('map__pin--active');
-      }
+      activePin.classList.remove('map__pin--active');
 
       card.remove();
       document.removeEventListener('keydown', documentKeyDownHandler);
