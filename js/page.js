@@ -4,7 +4,7 @@
   // активация страницы
   var activePage = function () {
     window.util.map.classList.remove('map--faded');
-    setTimeout('window.data.load(window.data.URL, window.loadUtil.onError)', 1000);
+    window.data.load(window.data.URL, window.loadUtil.onError);
     window.form.active();
     window.form.validate();
     window.map.onInteracte();

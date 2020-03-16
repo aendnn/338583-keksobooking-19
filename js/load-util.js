@@ -49,6 +49,7 @@
 
     var btnCloseClickHandler = function () {
       remove();
+      repeatLoad();
     };
 
     var btnCloseKeyDownHandler = function (evt) {
@@ -97,6 +98,10 @@
     var errorClose = error.querySelector('.error__button');
 
     closeModal(error, errorMessage, errorClose);
+  };
+
+  var repeatLoad = function () {
+    window.data.load(window.data.URL, window.loadUtil.onError);
   };
 
   // функция-коллбэк успеха

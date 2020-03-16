@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var URL = 'https://js.dump.academy/keksoboodking';
+  var URL = 'https://js.dump.academy/keksobooking';
 
   // загружает объявление
   var upload = function (data, onSuccess, onError) {

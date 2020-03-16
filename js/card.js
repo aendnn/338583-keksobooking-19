@@ -101,11 +101,9 @@
   var remove = function () {
     if (document.querySelector('.popup')) {
       var card = document.querySelector('.popup');
-      var activePin = document.querySelector('.map__pin--active');
-
-      activePin.classList.remove('map__pin--active');
-
+      window.map.removePinActive();
       card.remove();
+
       document.removeEventListener('keydown', documentKeyDownHandler);
     }
   };

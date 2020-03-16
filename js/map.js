@@ -7,7 +7,6 @@
   var mapPins = window.util.map.querySelector('.map__pins');
   var mapWidth = window.util.map.offsetWidth;
   var mapHeight = window.util.map.offsetHeight;
-  var pinActive;
 
   var generateCard = function (element, area, render) {
     var fragment = document.createDocumentFragment();
@@ -53,19 +52,28 @@
     }
 
     generateCard(ad, window.util.map, window.card.render);
+
     window.card.hideBlocks(ad);
     window.card.close();
   };
 
   // активирует пин
   var activePin = function (evtTarget) {
-    if (!pinActive) {
+    if (!document.querySelector('.map__pin--active')) {
       evtTarget.classList.toggle('map__pin--active');
 
       var targetX = evtTarget.style.left.slice(COORDINATES_START_INDEX, COORDINATES_PX_INDEX);
       var targetY = evtTarget.style.top.slice(COORDINATES_START_INDEX, COORDINATES_PX_INDEX);
 
       viewCard(targetX, targetY);
+    }
+  };
+
+  var removePinActive = function () {
+    var pinActive = document.querySelector('.map__pin--active');
+
+    if (pinActive) {
+      pinActive.classList.remove('map__pin--active');
     }
   };
 
@@ -97,8 +105,8 @@
     pins: mapPins,
     width: mapWidth,
     height: mapHeight,
-    activePin: pinActive,
     viewCard: viewCard,
+    removePinActive: removePinActive,
     clear: clearItems,
     generate: generatePins,
     onInteracte: addInteracteWithPins
