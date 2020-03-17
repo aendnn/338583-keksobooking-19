@@ -7,6 +7,7 @@
   var mapPins = window.util.map.querySelector('.map__pins');
   var mapWidth = window.util.map.offsetWidth;
   var mapHeight = window.util.map.offsetHeight;
+  var pinActive = document.querySelector('.map__pin--active');
 
   var generateCard = function (element, area, render) {
     var fragment = document.createDocumentFragment();
@@ -70,7 +71,7 @@
   };
 
   var removePinActive = function () {
-    var pinActive = document.querySelector('.map__pin--active');
+    pinActive = document.querySelector('.map__pin--active');
 
     if (pinActive) {
       pinActive.classList.remove('map__pin--active');
@@ -80,7 +81,7 @@
   // клик по пину открывает карточку
   var addInteracteWithPins = function () {
     var mapPinsClickHandler = function (evt) {
-      var target = evt.target.parentElement;
+      var target = evt.target;
 
       if (target.classList.contains('js-pin')) {
         window.card.remove();
@@ -88,17 +89,7 @@
       }
     };
 
-    var mapPinsKeyDownHandler = function (evt) {
-      var target = evt.target;
-
-      if (target.classList.contains('js-pin') && evt.key === window.util.enter) {
-        window.card.remove();
-        activePin(target);
-      }
-    };
-
     mapPins.addEventListener('click', mapPinsClickHandler);
-    mapPins.addEventListener('keydown', mapPinsKeyDownHandler);
   };
 
   window.map = {

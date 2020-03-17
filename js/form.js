@@ -90,7 +90,7 @@
 
   // валидация полей гостей и комнат
   var guestsAndRoomsFieldsChangeHandler = function () {
-    guestsCountField.setCustomValidity('Введите корректное кол-во');
+    guestsCountField.setCustomValidity('Введите корректное кол-во гостей');
 
     if (roomsCountField.value === guestsCountField.value) {
       guestsCountField.setCustomValidity('');
