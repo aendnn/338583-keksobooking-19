@@ -66,7 +66,7 @@
     var documentClickHandler = function (evt) {
       var target = evt.target;
 
-      if (target !== area) {
+      if (target !== area && target !== main) {
         remove();
       }
     };
@@ -83,9 +83,7 @@
   // функция-коллбэк ошибки
   var errorShowHandler = function (message) {
     var errorTemplate = document.querySelector('#error').content;
-    var errorMessage = errorTemplate.querySelector('.error__message');
-
-    errorMessage.textContent = message;
+    errorTemplate.querySelector('.error__message').textContent = message;
 
     var errorElement = errorTemplate.cloneNode(true);
 
@@ -94,6 +92,7 @@
     }
 
     var error = document.querySelector('.error');
+    var errorMessage = error.querySelector('.error__message');
     var errorClose = error.querySelector('.error__button');
 
     closeModal(error, errorMessage, errorClose);
@@ -102,18 +101,18 @@
   // функция-коллбэк успеха
   var successShowHandler = function (message) {
     var successTemplate = document.querySelector('#success').content;
-    var successMessage = successTemplate.querySelector('.success__message');
+    successTemplate.querySelector('.success__message').textContent = message;
 
-    successMessage.textContent = message;
     var successElement = successTemplate.cloneNode(true);
 
     if (!main.querySelector('.success')) {
       main.appendChild(successElement);
-
-      var success = main.querySelector('.success');
-
-      closeModal(success, successMessage);
     }
+
+    var success = main.querySelector('.success');
+    var successMessage = success.querySelector('.success__message');
+
+    closeModal(success, successMessage);
   };
 
   var xhrErrorHandler = function () {

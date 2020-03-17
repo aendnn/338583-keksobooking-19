@@ -50,13 +50,14 @@
   // заполняет поле с адресом
   var addAddress = function (isActive, x, y) {
     if (isActive) {
+      addressField.value = parseInt(window.mainPin.item.offsetLeft + window.pin.getCenter(window.mainPin.width), 10) +
+      ', ' + parseInt(window.mainPin.item.offsetTop + window.mainPin.height, 10);
 
       if (x && y) {
         addressField.value = x + ', ' + y;
       }
     } else {
-      // если страница не активна, координаты метки - центр карты
-      addressField.value = (Math.round(window.map.width / 2 - window.mainPin.width)) + ', ' + (Math.round(window.map.height / 2));
+      addressField.value = window.mainPin.item.offsetLeft + ', ' + window.mainPin.item.offsetTop;
     }
   };
 
@@ -213,7 +214,7 @@
 
     priceField.setCustomValidity('Введите корректную стоимость');
 
-    if (priceField.type === 'number' && numberPrice >= checkType(typeField.value) && numberPrice <= MAX_PRICE) {
+    if (numberPrice >= checkType(typeField.value) && numberPrice <= MAX_PRICE) {
       priceField.setCustomValidity('');
     }
 

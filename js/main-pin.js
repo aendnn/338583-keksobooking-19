@@ -6,12 +6,7 @@
   var width = pinMain.offsetWidth;
   var height = pinMain.offsetHeight;
 
-  var left = pinMain.style.left.slice(0, -2);
-  var top = pinMain.style.top.slice(0, -2);
-
   var addinteracteOnMainPin = function () {
-    window.form.addAddress(true, left, top);
-
     if (!window.util.map.classList.contains('map--faded')) {
       pinMain.removeEventListener('keydown', pinMainKeyDownHandler);
       pinMain.removeEventListener('mousedown', pinMainMouseDownHandler);

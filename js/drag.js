@@ -20,9 +20,9 @@
         window.mainPin.item.removeEventListener('keydown', window.mainPin.keyDown);
 
         var limits = {
-          top: PIN_Y_MIN,
+          top: PIN_Y_MIN - window.mainPin.height,
           right: window.map.width - window.pin.getCenter(window.pin.width),
-          bottom: PIN_Y_MAX,
+          bottom: PIN_Y_MAX - window.mainPin.height,
           left: -window.pin.getCenter(window.pin.width)
         };
 
@@ -51,8 +51,13 @@
           y: moveEvt.clientY
         };
 
+        var addressCoords = {
+          x: currentCoords.x + window.pin.getCenter(window.mainPin.item.width),
+          y: currentCoords.y + window.mainPin.item.height
+        };
+
         getCoordinates(currentCoords.x, currentCoords.y);
-        window.form.addAddress(true, currentCoords.x, currentCoords.y);
+        window.form.addAddress(true, addressCoords.x, addressCoords.y);
       };
 
       var documentMouseUpHandler = function (upEvt) {

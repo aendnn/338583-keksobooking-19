@@ -43,8 +43,9 @@
 
     var getCoordinates = function (element, index) {
       i = index;
-      var coordinateX = window.data.ads[i].location.x.toString();
-      var coordinateY = window.data.ads[i].location.y.toString();
+      var coordinateX = window.pin.x(window.data.ads[i], window.pin.getCenter(window.pin.width)).toString();
+      var coordinateY = window.pin.y(window.data.ads[i], window.pin.height).toString();
+
       return left === coordinateX && top === coordinateY;
     };
 
